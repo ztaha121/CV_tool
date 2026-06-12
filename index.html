@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -771,7 +772,7 @@ CV TEXT:
 ${cvText.substring(0, 6000)}`;
 
     try {
-      const response = await fetch('/api/analyze', {
+      const response = await fetch('/.netlify/functions/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
