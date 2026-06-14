@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      'Authorization': `Bearer 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`
     },
     body: JSON.stringify({
       model: 'llama3-8b-8192',
