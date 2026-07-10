@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -779,10 +778,13 @@ CV TEXT:
 ${cvText.substring(0, 6000)}`;
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      // SECURITY FIX: calls our own serverless proxy (/api/analyze) instead of
+      // hitting Groq directly from the browser. This keeps GROQ_API_KEY on the
+      // server side (Vercel env var) instead of exposed in page source.
+      const response = await fetch('/api/analyze', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer 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' },
-        body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [{ role: 'user', content: prompt }], temperature: 0.3 })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
       });
       const data = await response.json();
       const raw = data.choices?.[0]?.message?.content || '';
