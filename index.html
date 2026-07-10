@@ -771,8 +771,26 @@ header {
     btn.innerHTML = '<span class="spinner"></span> Analysing your CV...';
 
     const jobContext = jobTitle ? `The candidate is targeting the role: ${jobTitle}.` : '';
-    const prompt = `You are a senior CV consultant specialising in the Saudi Arabian and GCC job market. Analyse the following CV and return ONLY a valid JSON object with this exact structure (no markdown, no explanation, just JSON):
-{"overall":<0-100>,"verdict":"strong"|"good"|"weak","verdictText":"<one punchy sentence>","scores":{"impact":<0-100>,"ats":<0-100>,"tone":<0-100>,"gccFit":<0-100>,"achievementRatio":<0-100>,"structure":<0-100>},"wins":["<3-4 strengths>"],"fixes":["<3-4 problems>"],"quickWins":["<3 actionable fixes>"]}
+    const prompt = `You are a senior CV consultant specialising in the Saudi Arabian and GCC job market.
+
+GCC-SPECIFIC CRITERIA TO APPLY:
+- GCC recruiters favor clear, quantified achievements over vague duty statements. "Managed a team" is weak; "Managed a team of 8, reducing turnaround time by 30%" is strong.
+- Avoid overly casual Western-style CV language (e.g. "passionate go-getter", "ninja", "ambitious self-starter") — GCC hiring managers see this as filler and generic.
+- Certifications, sponsorship/visa status (if relevant), and language skills (especially Arabic/English bilingual ability) are valued and should be visible, not buried.
+- Photos, though common in some GCC CVs, are not required for most professional/corporate roles — note this only if relevant.
+
+EXAMPLES OF WEAK VS STRONG BULLETS (use this calibration when scoring "impact" and "achievementRatio"):
+- Weak: "Responsible for handling customer complaints."
+  Strong: "Resolved an average of 25 customer complaints weekly, improving satisfaction scores from 72% to 89% over 6 months."
+- Weak: "Worked on marketing campaigns for the company."
+  Strong: "Led 3 social media campaigns that grew Instagram following by 40% and drove a 15% increase in inbound leads."
+
+INSTRUCTIONS:
+First, briefly reason through the CV's strengths and weaknesses in plain text (2-4 short sentences, not a list) — consider achievement specificity, ATS-friendliness, tone, and GCC market fit given the calibration above.
+
+Then, on a new line, output ONLY a valid JSON object with this exact structure (no markdown, no code fences, nothing after it):
+{"overall":<0-100>,"verdict":"strong"|"good"|"weak","verdictText":"<one punchy sentence>","scores":{"impact":<0-100>,"ats":<0-100>,"tone":<0-100>,"gccFit":<0-100>,"achievementRatio":<0-100>,"structure":<0-100>},"wins":["<3-4 strengths, specific to this CV, not generic>"],"fixes":["<3-4 problems, specific to this CV, not generic>"],"quickWins":["<3 concrete actionable fixes the person can do today>"]}
+
 ${jobContext}
 CV TEXT:
 ${cvText.substring(0, 6000)}`;
@@ -788,7 +806,10 @@ ${cvText.substring(0, 6000)}`;
       });
       const data = await response.json();
       const raw = data.choices?.[0]?.message?.content || '';
-      const result = JSON.parse(raw.replace(/```json|```/g, '').trim());
+      // The model now writes brief reasoning before the JSON, so extract just the JSON object
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('No JSON found in response');
+      const result = JSON.parse(jsonMatch[0]);
       renderResults(result);
     } catch {
       errDiv.textContent = '✦ Analysis failed — please try again or paste your CV text below.';
