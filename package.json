@@ -1,0 +1,9 @@
+{
+  "name": "zayt-cv-checker",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@simplewebauthn/server": "^9.0.3",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
