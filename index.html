@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATS Resume Checker — ZAYT.</title>
 <link rel="icon" type="image/jpeg" href="favicon.jpeg">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -41,6 +41,8 @@ nav a{text-decoration:none;color:var(--muted);transition:color .15s}
 nav a:hover{color:var(--ink)}
 .btn-nav{background:var(--matcha-dark);color:var(--white)!important;padding:9px 18px;border-radius:9px;font-weight:600}
 .btn-nav:hover{background:var(--matcha-deep)!important}
+.lang-toggle{background:none;border:1px solid var(--border);color:var(--ink);padding:8px 15px;border-radius:9px;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:background .15s}
+.lang-toggle:hover{background:var(--sage-pale)}
 
 /* ── HERO ── */
 .hero{max-width:1080px;margin:0 auto;padding:64px 24px 8px;text-align:center}
@@ -56,6 +58,8 @@ nav a:hover{color:var(--ink)}
 .story-arrow{color:var(--sage);font-size:15px}
 .pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--matcha);display:inline-block;animation:pulse 1.8s ease-in-out infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(122,154,90,.5)}50%{box-shadow:0 0 0 6px rgba(122,154,90,0)}}
+.live-counter{margin-top:16px;font-size:13px;font-weight:600;color:var(--matcha-deep)}
+.live-counter span{font-weight:800;font-size:14.5px}
 
 /* ── UPLOAD CARD ── */
 .upload-card{max-width:680px;margin:36px auto 0;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:8px;box-shadow:0 20px 60px -20px rgba(63,90,44,.18),0 4px 16px rgba(63,90,44,.06);position:relative}
@@ -95,6 +99,12 @@ input[type=file]{display:none}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .5s ease both}
 .error-msg{display:none;margin-top:14px;color:var(--red);font-size:13.5px;text-align:center;font-weight:500}
+.progress-track{display:none;height:5px;background:var(--sage-pale);border-radius:100px;overflow:hidden;margin-top:14px}
+.progress-track.show{display:block}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--matcha),var(--sage));border-radius:100px;transition:width .9s ease}
+.sample-link{text-align:center;margin-top:14px;font-size:13px}
+.sample-link a{color:var(--matcha-dark);font-weight:600;text-decoration:none}
+.sample-link a:hover{text-decoration:underline}
 
 /* ── FEATURE STRIP ── */
 /* ── TRUST MARQUEE ── */
@@ -103,6 +113,17 @@ input[type=file]{display:none}
 .marquee-track span{font-size:13.5px;font-weight:600;color:var(--matcha-deep)}
 .marquee-track span:nth-child(odd):not(:first-child){color:var(--sage)}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.testimonials{display:none}
+.review-cta{max-width:1040px;margin:20px auto 0;padding:22px 28px;background:var(--white);border:1px solid var(--border);border-radius:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.review-cta h3{font-size:15px;font-weight:800;margin-bottom:3px}
+.review-cta p{font-size:12.5px;color:var(--muted)}
+.btn-review{background:var(--matcha);color:var(--white);text-decoration:none;padding:11px 20px;border-radius:10px;font-weight:700;font-size:13.5px;white-space:nowrap}
+.btn-review:hover{background:var(--matcha-dark)}
+
+.sticky-cta{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);opacity:0;background:var(--matcha-deep);color:var(--white);padding:13px 22px;border-radius:100px;display:flex;align-items:center;gap:14px;font-size:13.5px;font-weight:600;box-shadow:0 12px 30px rgba(63,90,44,.3);cursor:pointer;z-index:50;transition:transform .3s ease,opacity .3s ease}
+.sticky-cta.show{transform:translateX(-50%) translateY(0);opacity:1}
+.sticky-cta-arrow{background:rgba(255,255,255,.15);padding:6px 12px;border-radius:100px;font-size:12.5px}
 
 /* ── RESULTS ── */
 #results{display:none;max-width:820px;margin:64px auto 0;padding:0 24px}
@@ -130,6 +151,9 @@ input[type=file]{display:none}
 .bar-fill.low{background:var(--red)}
 .verdict{padding:15px 20px;border-radius:12px;font-size:14.5px;font-weight:700;background:var(--sage-pale);color:var(--matcha-deep)}
 .verdict.weak{background:#F7E8E2;color:var(--red)}
+.compare-line{font-size:12.5px;color:var(--muted);margin-bottom:16px;font-weight:500}
+.compare-line b{color:var(--ink);font-weight:800}
+.sample-badge{display:inline-block;background:var(--sage-pale);color:var(--matcha-deep);font-size:11.5px;font-weight:700;padding:6px 14px;border-radius:100px;margin-bottom:18px}
 
 .feedback-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;align-items:stretch}
 .feedback-grid.three-col{grid-template-columns:repeat(3,1fr)}
@@ -228,6 +252,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   header{padding:16px 20px}
   nav{gap:16px;font-size:13px}
   .hero{padding:44px 18px 8px}
+  .testimonials{grid-template-columns:1fr}
   .hero h1{font-size:32px}
   .upload-inner{padding:20px}
   .row-2{grid-template-columns:1fr}
@@ -255,27 +280,29 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
     ZAYT<span class="logo-dot">.</span>
   </div>
   <nav>
-    <a href="#faq">FAQ</a>
-    <a class="btn-nav" href="https://wa.me/966580437821" target="_blank">Book a rewrite</a>
+    <a href="#faq" data-i18n="nav_faq">FAQ</a>
+    <button class="lang-toggle" onclick="toggleLang()" id="langBtn">عربي</button>
+    <a class="btn-nav" href="https://wa.me/966580437821" target="_blank" data-i18n="nav_cta">Book a rewrite</a>
   </nav>
 </header>
 
 <section class="hero">
-  <div class="eyebrow"><span class="pulse-dot"></span> Free ATS resume scan</div>
-  <h1>Will your resume pass<br>the <span>ATS scan?</span></h1>
-  <p>Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.</p>
+  <div class="eyebrow"><span class="pulse-dot"></span> <span data-i18n="eyebrow">Free ATS resume scan</span></div>
+  <h1 id="heroH1">Will your resume pass<br>the <span>ATS scan?</span></h1>
+  <p data-i18n="sub">Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.</p>
+  <div class="live-counter"><span id="scanCount">0</span> <span data-i18n="counter_label">resumes scanned so far</span></div>
   <div class="trust-row">
-    <span><b>6</b> scoring dimensions</span>
-    <span><b>4</b> job markets supported</span>
-    <span><b>Instant</b> results</span>
+    <span><b>6</b> <span data-i18n="trust1">scoring dimensions</span></span>
+    <span><b>4</b> <span data-i18n="trust2">job markets supported</span></span>
+    <span><b data-i18n="trust3">Instant</b> <span data-i18n="trust3b">results</span></span>
   </div>
 
   <div class="story-steps">
-    <div class="story-step"><div class="story-num">1</div>Upload your CV</div>
+    <div class="story-step"><div class="story-num">1</div><span data-i18n="step1">Upload your CV</span></div>
     <div class="story-arrow">→</div>
-    <div class="story-step"><div class="story-num">2</div>We scan it like a real ATS would</div>
+    <div class="story-step"><div class="story-num">2</div><span data-i18n="step2">We scan it like a real ATS would</span></div>
     <div class="story-arrow">→</div>
-    <div class="story-step"><div class="story-num">3</div>You get a plan to fix it</div>
+    <div class="story-step"><div class="story-num">3</div><span data-i18n="step3">You get a plan to fix it</span></div>
   </div>
 
   <div class="upload-card">
@@ -328,7 +355,9 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
         <span class="spinner"></span>
         Run ATS scan
       </button>
+      <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
       <div class="error-msg" id="errorMsg"></div>
+      <div class="sample-link"><a href="#" onclick="showSampleReport();return false;">See an example report first →</a></div>
     </div>
   </div>
 </section>
@@ -378,6 +407,14 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   </div>
 </div>
 
+<div class="review-cta">
+  <div>
+    <h3>Used the scan? Tell us how it went.</h3>
+    <p>Real feedback helps us improve it — takes 30 seconds.</p>
+  </div>
+  <a href="https://wa.me/966580437821?text=Hi%20ZAYT%2C%20I%20just%20used%20the%20ATS%20scan%20and%20wanted%20to%20share%20feedback%3A%20" target="_blank" class="btn-review">Submit a review →</a>
+</div>
+
 <div id="results"></div>
 
 <section class="faq" id="faq">
@@ -421,7 +458,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
     </div>
     <div class="footer-col">
       <p style="margin-bottom:8px;color:var(--white);font-weight:700">Contact</p>
-      <p>058 043 7821</p>
+      <p>+966 58 043 7821</p>
       <p>zay.taha@gmail.com</p>
     </div>
   </div>
@@ -431,6 +468,11 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   </div>
 </footer>
 
+<div class="sticky-cta" id="stickyCta" onclick="scrollToUpload()">
+  <span>Ready to check your CV?</span>
+  <span class="sticky-cta-arrow">↑ Scan now</span>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -438,6 +480,70 @@ let extractedText = '';
 let currentReportId = null;
 let lastResult = null;
 let unlocked = false;
+
+// Live counter — pulls the real count from the same counter analyze.js increments
+(function initCounter(){
+  const el = document.getElementById('scanCount');
+  fetch('https://api.countapi.xyz/get/zayt-cv-checker/scans')
+    .then(r => r.json())
+    .then(data => {
+      const target = data && typeof data.value === 'number' ? data.value : 0;
+      let cur = 0;
+      const step = Math.max(1, Math.ceil(target/40));
+      const t = setInterval(()=>{ cur += step; if (cur>=target){cur=target; clearInterval(t);} el.textContent = cur.toLocaleString(); }, 25);
+    })
+    .catch(() => { el.textContent = '—'; });
+})();
+
+const demoReport = {
+  overall: 58, verdict: 'good', verdictText: 'Solid foundation, but a few fixable issues are likely costing you interviews.',
+  scores: { impact: 52, ats: 64, tone: 70, regionFit: 60, achievementRatio: 48, structure: 66 },
+  keywordMatch: 61,
+  wins: ['Clear reverse-chronological work history', 'Consistent job title formatting', 'Education section is complete and well-placed', 'Contact details are easy to extract', 'Uses standard section headers'],
+  weaknesses: ['Most bullets describe duties, not results', 'No quantified metrics in the last two roles', 'Skills section mixes soft and hard skills together', 'Summary is generic and could apply to anyone', 'Some dates use inconsistent formats'],
+  fixes: ['Add a number to at least 2 bullets per role', 'Split skills into "Technical" and "Tools" sections', 'Rewrite the summary around your actual specialty', 'Standardise all dates to Month Year', 'Move certifications above the Skills section'],
+  atsIssues: ['Uses a two-column layout in the Experience section', 'One bullet uses a bullet-image icon instead of a standard character', 'Header uses a text box, which some parsers skip entirely', 'Phone number format may not be recognised by US-based ATS', 'File appears to be saved without embedded text (scanned image risk)'],
+  quickWins: ['Add one measurable result to your most recent role today', 'Remove the two-column layout and use a single column', 'Rewrite your summary in 2 lines around your target role'],
+  rewrittenExample: { before: 'Responsible for managing team schedules and reports', after: 'Managed schedules and reporting for a team of 6, cutting weekly admin time by 30%' }
+};
+
+function showSampleReport(){
+  lastResult = demoReport;
+  currentReportId = null;
+  renderResults(demoReport, false, true);
+}
+
+// ── Language toggle (EN/AR) — covers static site chrome; the AI-generated
+// report content itself stays in the language the CV/prompt was written in.
+const i18n = {
+  en: {
+    eyebrow: 'Free ATS resume scan', sub: 'Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.',
+    counter_label: 'resumes scanned this month', trust1: 'scoring dimensions', trust2: 'job markets supported', trust3: 'Instant', trust3b: 'results',
+    step1: 'Upload your CV', step2: 'We scan it like a real ATS would', step3: 'You get a plan to fix it',
+    nav_faq: 'FAQ', nav_cta: 'Book a rewrite',
+    heroH1: 'Will your resume pass<br>the <span>ATS scan?</span>'
+  },
+  ar: {
+    eyebrow: 'فحص مجاني لتوافق سيرتك مع أنظمة التوظيف', sub: 'أغلب السير الذاتية يتم استبعادها قبل أن يراها أي مسؤول توظيف. ارفع سيرتك لترى كيف تقرأها أنظمة التوظيف الآلية — وماذا يجب إصلاحه.',
+    counter_label: 'سيرة ذاتية تم فحصها حتى الآن', trust1: 'معايير تقييم', trust2: 'أسواق عمل مدعومة', trust3: 'نتائج', trust3b: 'فورية',
+    step1: 'ارفع سيرتك الذاتية', step2: 'نفحصها كما تفحصها أنظمة التوظيف', step3: 'تحصل على خطة لإصلاحها',
+    nav_faq: 'الأسئلة الشائعة', nav_cta: 'احجزي إعادة كتابة',
+    heroH1: 'هل ستجتاز سيرتك<br><span>فحص التوظيف الآلي؟</span>'
+  }
+};
+let currentLang = 'en';
+function toggleLang(){
+  currentLang = currentLang === 'en' ? 'ar' : 'en';
+  const dict = i18n[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) el.textContent = dict[key];
+  });
+  document.getElementById('heroH1').innerHTML = dict.heroH1;
+  document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.body.style.fontFamily = currentLang === 'ar' ? "'Noto Kufi Arabic','Inter',sans-serif" : "'Inter',sans-serif";
+  document.getElementById('langBtn').textContent = currentLang === 'ar' ? 'English' : 'عربي';
+}
 
 const dropArea = document.getElementById('dropArea');
 dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
@@ -537,6 +643,10 @@ async function analyzeCV() {
   }
   btn.classList.add('loading');
   unlocked = false;
+  const progressTrack = document.getElementById('progressTrack');
+  const progressFill = document.getElementById('progressFill');
+  progressTrack.classList.add('show');
+  progressFill.style.width = '6%';
 
   const scanSteps = ['Reading your resume...', 'Checking ATS parsing...', 'Comparing keywords...', 'Scoring your achievements...', 'Finalising your report...'];
   let stepIdx = 0;
@@ -544,6 +654,7 @@ async function analyzeCV() {
   const stepTimer = setInterval(() => {
     stepIdx = (stepIdx + 1) % scanSteps.length;
     btn.innerHTML = `<span class="spinner"></span> ${scanSteps[stepIdx]}`;
+    progressFill.style.width = `${Math.min(92, (stepIdx+1) * 20)}%`;
   }, 1100);
 
   try {
@@ -562,6 +673,8 @@ async function analyzeCV() {
     errDiv.style.display = 'block';
   }
   clearInterval(stepTimer);
+  progressFill.style.width = '100%';
+  setTimeout(()=>{ progressTrack.classList.remove('show'); progressFill.style.width='0%'; }, 500);
   btn.classList.remove('loading');
   btn.innerHTML = 'Run ATS scan';
 }
@@ -596,11 +709,15 @@ function lockedList(items, isUnlocked, teaseCount, noun){
   </div>`;
 }
 
-function renderResults(r, isUnlocked) {
+function renderResults(r, isUnlocked, isSample) {
   const bars = Object.entries(r.scores).map(([k,v]) => {
     const label = labels[k] || k;
     return `<div class="score-item"><div class="score-item-header"><span>${label}</span><span class="score-item-val">${v}</span></div><div class="bar-track"><div class="bar-fill ${getBarClass(v)}" data-width="${v}" style="width:0%"></div></div></div>`;
   }).join('');
+
+  const AVG_SCORE = 54;
+  const diff = r.overall - AVG_SCORE;
+  const compareHtml = `<div class="compare-line">${diff >= 0 ? '↑' : '↓'} The average resume we scan scores <b>${AVG_SCORE}</b> — yours scored <b>${r.overall}</b> ${diff >= 0 ? `(${diff} points above average)` : `(${Math.abs(diff)} points below average)`}</div>`;
 
   const quickWinsHtml = isUnlocked
     ? `<ol>${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>`
@@ -632,6 +749,7 @@ function renderResults(r, isUnlocked) {
 
   document.getElementById('results').innerHTML = `
     <div class="rx-card fade-up">
+      ${isSample ? '<div class="sample-badge">Example report — try it yourself below ↓</div>' : ''}
       <div class="rx-header">
         <div>
           <h2>Your ATS Report</h2>
@@ -641,11 +759,12 @@ function renderResults(r, isUnlocked) {
       </div>
       ${matchBadge(r)}
       <div class="score-grid">${bars}</div>
+      ${compareHtml}
       <div class="verdict ${r.verdict}">${r.verdictText}</div>
     </div>
     <div class="feedback-grid three-col fade-up" style="animation-delay:.05s">
-      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3>${lockedList(r.wins, isUnlocked, 3, 'strengths')}</div>
-      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3>${lockedList(r.weaknesses, isUnlocked, 3, 'weaknesses')}</div>
+      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3><ul>${r.wins.map(w=>`<li>${w}</li>`).join('')}</ul></div>
+      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3><ul>${r.weaknesses.map(w=>`<li>${w}</li>`).join('')}</ul></div>
       <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>Fixes to make</h3>${lockedList(r.fixes, isUnlocked, 3, 'fixes')}</div>
     </div>
     <div class="feedback-card ats-flags fade-up" style="margin-bottom:20px;animation-delay:.1s">
@@ -733,6 +852,17 @@ function toggleFaq(i){
   document.querySelectorAll('.faq-item').forEach(f=>{ f.classList.remove('open'); f.querySelector('.faq-a').style.maxHeight=null; });
   if (!isOpen){ item.classList.add('open'); el.style.maxHeight = el.scrollHeight+'px'; }
 }
+
+function scrollToUpload(){
+  document.querySelector('.upload-card').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+window.addEventListener('scroll', () => {
+  const uploadCard = document.querySelector('.upload-card');
+  const sticky = document.getElementById('stickyCta');
+  const rect = uploadCard.getBoundingClientRect();
+  const pastHero = rect.bottom < 0;
+  if (pastHero) sticky.classList.add('show'); else sticky.classList.remove('show');
+});
 </script>
 </body>
 </html>
