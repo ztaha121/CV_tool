@@ -167,10 +167,17 @@ input[type=file]{display:none}
 .feedback-card.wins .tag-icon{background:var(--matcha)}
 .feedback-card.fixes .tag-icon{background:var(--red)}
 .feedback-card.weak .tag-icon{background:var(--amber)}
-.feedback-card ul{list-style:none;display:flex;flex-direction:column;gap:12px}
-.feedback-card li{font-size:13.5px;padding-left:0;color:var(--ink)}
+.feedback-card ul{list-style:none;display:flex;flex-direction:column;gap:13px}
+.feedback-card li{font-size:13.5px;color:var(--ink);padding-left:22px;position:relative;line-height:1.5}
+.feedback-card li::before{content:'';position:absolute;left:0;top:6px;width:8px;height:8px;border-radius:50%}
+.feedback-card.wins li::before{background:var(--matcha)}
+.feedback-card.weak li::before{background:var(--amber)}
+.feedback-card.fixes li::before{background:var(--red)}
+.feedback-card.ats-flags li::before{background:var(--ink)}
 
 .rewrite-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 30px rgba(63,90,44,.05)}
+.rewrite-pair{display:flex;flex-direction:column;gap:8px}
+.rewrite-pair + .rewrite-pair{padding-top:12px;border-top:1px dashed var(--border)}
 .rewrite-label{font-size:13px;font-weight:700;color:var(--matcha-deep);margin-bottom:2px}
 .loop-close{display:flex;align-items:center;gap:16px;margin-top:20px;padding:20px 24px;background:var(--white);border:1px dashed var(--sage);border-radius:14px}
 .loop-num{width:34px;height:34px;border-radius:50%;background:var(--matcha);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -451,7 +458,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
       <div class="footer-logo">ZAYT<span class="logo-dot">.</span></div>
       <p>Bilingual CV writing and optimisation, ATS-checked and built for the role you actually want.</p>
       <div class="social-links">
-        <a href="https://instagram.com/zayt.cv" target="_blank">Instagram</a>
+        <a href="https://instagram.com/zayt.cvservices" target="_blank">Instagram</a>
         <a href="https://wa.me/966580437821" target="_blank">WhatsApp</a>
         <a href="mailto:zay.taha@gmail.com">Email</a>
       </div>
@@ -504,7 +511,12 @@ const demoReport = {
   fixes: ['Add a number to at least 2 bullets per role', 'Split skills into "Technical" and "Tools" sections', 'Rewrite the summary around your actual specialty', 'Standardise all dates to Month Year', 'Move certifications above the Skills section'],
   atsIssues: ['Uses a two-column layout in the Experience section', 'One bullet uses a bullet-image icon instead of a standard character', 'Header uses a text box, which some parsers skip entirely', 'Phone number format may not be recognised by US-based ATS', 'File appears to be saved without embedded text (scanned image risk)'],
   quickWins: ['Add one measurable result to your most recent role today', 'Remove the two-column layout and use a single column', 'Rewrite your summary in 2 lines around your target role'],
-  rewrittenExample: { before: 'Responsible for managing team schedules and reports', after: 'Managed schedules and reporting for a team of 6, cutting weekly admin time by 30%' }
+  rewrittenExamples: [
+    { before: 'Responsible for managing team schedules and reports', after: 'Managed schedules and reporting for a team of 6, cutting weekly admin time by 30%' },
+    { before: 'Worked on customer support tickets', after: 'Resolved an average of 40 support tickets weekly, maintaining a 95% satisfaction rating' },
+    { before: 'Helped with social media content', after: 'Created and scheduled 15+ weekly social posts, growing engagement by 22% over 3 months' },
+    { before: 'Assisted in project coordination', after: 'Coordinated timelines across 4 cross-functional teams, delivering 3 projects ahead of schedule' }
+  ]
 };
 
 function showSampleReport(){
@@ -730,22 +742,36 @@ function renderResults(r, isUnlocked, isSample) {
         </div>
       </div>`;
 
-  const rewriteHtml = r.rewrittenExample ? (isUnlocked
-    ? `<div class="rewrite-card fade-up">
-        <div class="rewrite-label">See how we'd fix a real line from your CV</div>
-        <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${r.rewrittenExample.before}</div>
-        <div class="rewrite-row after"><span class="rewrite-tag">After</span>${r.rewrittenExample.after}</div>
-      </div>`
-    : `<div class="rewrite-card fade-up">
-        <div class="rewrite-label">See how we'd fix a real line from your CV</div>
-        <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${r.rewrittenExample.before}</div>
-        <div class="lock-wrap">
-          <div class="rewrite-row after locked-item"><span class="rewrite-tag">After</span>${r.rewrittenExample.after}</div>
-          <div class="lock-overlay">
-            <button class="btn-unlock-small" onclick="openUnlock()">Unlock the fix</button>
-          </div>
+  const rewriteHtml = (r.rewrittenExamples && r.rewrittenExamples.length) ? (() => {
+    const shown = r.rewrittenExamples.slice(0, 2);
+    const locked = isUnlocked ? [] : r.rewrittenExamples.slice(2);
+    const shownHtml = shown.map(ex => `
+      <div class="rewrite-pair">
+        <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${ex.before}</div>
+        <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
+      </div>`).join('');
+    const restShown = isUnlocked ? r.rewrittenExamples.slice(2).map(ex => `
+      <div class="rewrite-pair">
+        <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${ex.before}</div>
+        <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
+      </div>`).join('') : '';
+    const lockedHtml = locked.length ? `
+      <div class="lock-wrap" style="margin-top:12px">
+        <div class="locked-item">${locked.map(ex => `
+          <div class="rewrite-pair">
+            <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${ex.before}</div>
+            <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
+          </div>`).join('')}</div>
+        <div class="lock-overlay">
+          <div class="lock-count">+${locked.length} more rewrite${locked.length>1?'s':''}</div>
+          <button class="btn-unlock-small" onclick="openUnlock()">Unlock</button>
         </div>
-      </div>`) : '';
+      </div>` : '';
+    return `<div class="rewrite-card fade-up">
+      <div class="rewrite-label">See how we'd fix real lines from your CV</div>
+      ${shownHtml}${restShown}${lockedHtml}
+    </div>`;
+  })() : '';
 
   document.getElementById('results').innerHTML = `
     <div class="rx-card fade-up">
