@@ -318,8 +318,8 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   <nav>
     <a href="#faq" data-i18n="nav_faq">FAQ</a>
     <button class="lang-toggle" onclick="toggleLang()" id="langBtn">عربي</button>
-    <button class="lang-toggle" id="authBtn" onclick="openAuth()">Log in</button>
-    <button class="lang-toggle" id="addFaceIdBtn" style="display:none" onclick="handleRegisterFaceId()">+ Face ID</button>
+    <button class="lang-toggle" id="authBtn" onclick="openAuth()" data-i18n="nav_login">Log in</button>
+    <button class="lang-toggle" id="addFaceIdBtn" style="display:none" onclick="handleRegisterFaceId()" data-i18n="nav_add_faceid">+ Face ID</button>
     <a class="btn-nav" href="https://wa.me/966580437821" target="_blank" data-i18n="nav_cta">Get expert human review</a>
   </nav>
 </header>
@@ -328,7 +328,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   <div class="mac-window">
     <div class="mac-titlebar">
       <span class="mac-dot red"></span><span class="mac-dot yellow"></span><span class="mac-dot green"></span>
-      <span class="mac-titlebar-text">ATS Resume Checker</span>
+      <span class="mac-titlebar-text" data-i18n="mac_title">ATS Resume Checker</span>
     </div>
     <div class="mac-window-body">
       <div class="app-icon">🔍</div>
@@ -352,57 +352,57 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
       <div class="upload-card">
         <div class="upload-inner">
           <input type="file" id="pdfInput" accept=".pdf,.doc,.docx,.txt">
-          <div class="step-label"><span class="step-num">1</span>Upload your resume</div>
+          <div class="step-label"><span class="step-num">1</span><span data-i18n="step_label_1">Upload your resume</span></div>
           <div class="drop-area" id="dropArea" onclick="document.getElementById('pdfInput').click()">
             <span class="drop-icon" id="dropIcon">📄</span>
-            <div class="drop-title" id="dropTitle">Drop your CV here</div>
-            <div class="drop-sub" id="dropSub">PDF, Word, or plain text · Max 5MB</div>
-            <button class="btn-upload" type="button" onclick="event.stopPropagation(); document.getElementById('pdfInput').click()">Choose file</button>
+            <div class="drop-title" id="dropTitle" data-i18n="drop_title">Drop your CV here</div>
+            <div class="drop-sub" id="dropSub" data-i18n="drop_sub">PDF, Word, or plain text · Max 5MB</div>
+            <button class="btn-upload" type="button" onclick="event.stopPropagation(); document.getElementById('pdfInput').click()" data-i18n="choose_file">Choose file</button>
             <div class="file-pill" id="filePill">
               <span id="fileName">—</span>
               <button class="remove-file" onclick="event.stopPropagation(); removeFile()" title="Remove">✕</button>
             </div>
           </div>
-          <div class="or-divider">or paste your CV text</div>
-          <textarea id="cvText" class="upload-textarea" placeholder="Paste your CV text here directly"></textarea>
+          <div class="or-divider" data-i18n="or_divider">or paste your CV text</div>
+          <textarea id="cvText" class="upload-textarea" placeholder="Paste your CV text here directly" data-i18n-placeholder="cv_paste_placeholder"></textarea>
 
-          <div class="step-label"><span class="step-num">2</span>Add job details for a keyword match score</div>
+          <div class="step-label"><span class="step-num">2</span><span data-i18n="step_label_2">Add job details for a keyword match score</span></div>
           <div class="row-2">
             <div class="field">
-              <label>Target job title (optional)</label>
-              <input type="text" id="jobTitle" placeholder="e.g. Data Analyst">
+              <label data-i18n="job_title_label">Target job title (optional)</label>
+              <input type="text" id="jobTitle" placeholder="e.g. Data Analyst" data-i18n-placeholder="job_title_placeholder">
             </div>
             <div class="field">
-              <label>Country</label>
+              <label data-i18n="country_label">Country</label>
               <select id="country">
-                <option value="SA">Saudi Arabia</option>
-                <option value="AE">United Arab Emirates</option>
-                <option value="QA">Qatar</option>
-                <option value="KW">Kuwait</option>
-                <option value="BH">Bahrain</option>
-                <option value="OM">Oman</option>
-                <option value="MA">Morocco</option>
-                <option value="EG">Egypt</option>
-                <option value="US">United States</option>
-                <option value="GB">United Kingdom</option>
-                <option value="CA">Canada</option>
-                <option value="OTHER">Global / Other</option>
+                <option value="SA" data-i18n="country_SA">Saudi Arabia</option>
+                <option value="AE" data-i18n="country_AE">United Arab Emirates</option>
+                <option value="QA" data-i18n="country_QA">Qatar</option>
+                <option value="KW" data-i18n="country_KW">Kuwait</option>
+                <option value="BH" data-i18n="country_BH">Bahrain</option>
+                <option value="OM" data-i18n="country_OM">Oman</option>
+                <option value="MA" data-i18n="country_MA">Morocco</option>
+                <option value="EG" data-i18n="country_EG">Egypt</option>
+                <option value="US" data-i18n="country_US">United States</option>
+                <option value="GB" data-i18n="country_GB">United Kingdom</option>
+                <option value="CA" data-i18n="country_CA">Canada</option>
+                <option value="OTHER" data-i18n="country_OTHER">Global / Other</option>
               </select>
             </div>
           </div>
           <div class="field" style="margin-top:12px">
-            <label>Job description (optional — improves keyword match accuracy)</label>
-            <textarea id="jobDesc" class="upload-textarea" style="min-height:70px" placeholder="Paste the job posting here for a tailored keyword match score"></textarea>
+            <label data-i18n="job_desc_label">Job description (optional — improves keyword match accuracy)</label>
+            <textarea id="jobDesc" class="upload-textarea" style="min-height:70px" placeholder="Paste the job posting here for a tailored keyword match score" data-i18n-placeholder="job_desc_placeholder"></textarea>
           </div>
 
           <div class="scan-banner" id="scanBanner"></div>
           <button class="btn-analyze" id="analyzeBtn" onclick="analyzeCV()">
             <span class="spinner"></span>
-            Run ATS scan
+            <span data-i18n="run_scan">Run ATS scan</span>
           </button>
           <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
           <div class="error-msg" id="errorMsg"></div>
-          <div class="sample-link"><a href="#" onclick="showSampleReport();return false;">See an example report first →</a></div>
+          <div class="sample-link"><a href="#" onclick="showSampleReport();return false;" data-i18n="sample_link">See an example report first →</a></div>
         </div>
       </div>
     </div>
@@ -456,17 +456,17 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 
 <div class="review-cta">
   <div>
-    <h3>Used the scan? Tell us how it went.</h3>
-    <p>Real feedback helps us improve it — takes 30 seconds.</p>
+    <h3 data-i18n="review_title">Used the scan? Tell us how it went.</h3>
+    <p data-i18n="review_sub">Real feedback helps us improve it — takes 30 seconds.</p>
   </div>
-  <a href="https://wa.me/966580437821?text=Hi%20ZAYT%2C%20I%20just%20used%20the%20ATS%20scan%20and%20wanted%20to%20share%20feedback%3A%20" target="_blank" class="btn-review">Submit a review →</a>
+  <a href="https://wa.me/966580437821?text=Hi%20ZAYT%2C%20I%20just%20used%20the%20ATS%20scan%20and%20wanted%20to%20share%20feedback%3A%20" target="_blank" class="btn-review" data-i18n="review_cta">Submit a review →</a>
 </div>
 
 <div id="results"></div>
 
 <section class="faq" id="faq">
-  <h2>Frequently asked</h2>
-  <p class="faq-sub">Everything you need to know before you upload</p>
+  <h2 data-i18n="faq_title">Frequently asked</h2>
+  <p class="faq-sub" data-i18n="faq_sub">Everything you need to know before you upload</p>
   <div id="faqList"></div>
 </section>
 
@@ -475,21 +475,21 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 <div class="modal-backdrop" id="unlockModal">
   <div class="modal">
     <button class="modal-close" onclick="closeUnlock()">✕</button>
-    <h2>Unlock your full report</h2>
-    <p style="font-size:13.5px;color:var(--muted)">See every strength, every fix, your full action plan, and all rewrite examples for this scan.</p>
-    <div class="price" id="modalPrice">$4.99 <span>one-time, unlocks this report</span></div>
+    <h2 data-i18n="unlock_title">Unlock your full report</h2>
+    <p style="font-size:13.5px;color:var(--muted)" data-i18n="unlock_sub">See every strength, every fix, your full action plan, and all rewrite examples for this scan.</p>
+    <div class="price" id="modalPrice">$4.99 <span data-i18n="unlock_price_note">one-time, unlocks this report</span></div>
     <ul>
-      <li>Full report for this scan</li>
-      <li>Your complete action plan</li>
-      <li>Pay once — never billed again</li>
+      <li data-i18n="unlock_li1">Full report for this scan</li>
+      <li data-i18n="unlock_li2">Your complete action plan</li>
+      <li data-i18n="unlock_li3">Pay once — never billed again</li>
     </ul>
-    <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/kdfaka" target="_blank">Unlock for $4.99 →</a>
+    <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/kdfaka" target="_blank" data-i18n="unlock_btn">Unlock for $4.99 →</a>
     <div class="license-row">
-      <input type="email" id="licenseInput" placeholder="Email you paid with">
-      <button onclick="verifyReportUnlock()">Check</button>
+      <input type="email" id="licenseInput" placeholder="Email you paid with" data-i18n-placeholder="email_paid_placeholder">
+      <button onclick="verifyReportUnlock()" data-i18n="check_btn">Check</button>
     </div>
     <div class="license-msg" id="licenseMsg"></div>
-    <div class="modal-note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. After paying, come back and check with the same email you used at checkout.</div>
+    <div class="modal-note" data-i18n="unlock_note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. After paying, come back and check with the same email you used at checkout.</div>
   </div>
 </div>
 
@@ -497,20 +497,20 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 <div class="modal-backdrop" id="scanCreditModal">
   <div class="modal">
     <button class="modal-close" onclick="closeScanCreditModal()">✕</button>
-    <h2>You've used your 3 free premium scans</h2>
-    <p style="font-size:13.5px;color:var(--muted)">Buy 1 more premium scan (powered by our most accurate model) — no subscription, just this one scan.</p>
-    <div class="price" id="scanCreditPrice">$7.99 <span>one-time, adds 1 more scan</span></div>
+    <h2 data-i18n="credit_title">You've used your 3 free premium scans</h2>
+    <p style="font-size:13.5px;color:var(--muted)" data-i18n="credit_sub">Buy 1 more premium scan (powered by our most accurate model) — no subscription, just this one scan.</p>
+    <div class="price" id="scanCreditPrice">$7.99 <span data-i18n="credit_price_note">one-time, adds 1 more scan</span></div>
     <ul>
-      <li>1 additional premium scan, full report</li>
-      <li>Uses our more accurate model</li>
-      <li>Buy more any time, one at a time</li>
+      <li data-i18n="credit_li1">1 additional premium scan, full report</li>
+      <li data-i18n="credit_li2">Uses our more accurate model</li>
+      <li data-i18n="credit_li3">Buy more any time, one at a time</li>
     </ul>
-    <a class="btn-gumroad" id="scanCreditGumroadLink" href="https://zaytaha.gumroad.com/l/okbik" target="_blank">Buy 1 scan for $7.99 →</a>
+    <a class="btn-gumroad" id="scanCreditGumroadLink" href="https://zaytaha.gumroad.com/l/okbik" target="_blank" data-i18n="credit_btn">Buy 1 scan for $7.99 →</a>
     <div class="license-row">
-      <button onclick="refreshScanStatus()" style="width:100%">I've paid — check now</button>
+      <button onclick="refreshScanStatus()" style="width:100%" data-i18n="credit_check_btn">I've paid — check now</button>
     </div>
     <div class="license-msg" id="scanCreditMsg"></div>
-    <div class="modal-note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. Checking usually works within a minute of payment.</div>
+    <div class="modal-note" data-i18n="credit_note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. Checking usually works within a minute of payment.</div>
   </div>
 </div>
 
@@ -518,28 +518,28 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 <div class="modal-backdrop" id="authModal">
   <div class="modal">
     <button class="modal-close" onclick="closeAuth()">✕</button>
-    <h2 id="authTitle">Log in for premium scans</h2>
-    <p style="font-size:13.5px;color:var(--muted)">Signed-in scans run on our more accurate model — free to create an account.</p>
+    <h2 id="authTitle" data-i18n="auth_title_login">Log in for premium scans</h2>
+    <p style="font-size:13.5px;color:var(--muted)" data-i18n="auth_sub">Signed-in scans run on our more accurate model — free to create an account.</p>
     <div class="field" style="margin-top:18px">
-      <label>Email</label>
+      <label data-i18n="email_label">Email</label>
       <input type="email" id="authEmail" placeholder="you@email.com">
     </div>
     <div class="field" style="margin-top:12px">
-      <label>Password</label>
-      <input type="password" id="authPassword" placeholder="At least 6 characters">
+      <label data-i18n="password_label">Password</label>
+      <input type="password" id="authPassword" placeholder="At least 6 characters" data-i18n-placeholder="password_placeholder">
     </div>
-    <button class="btn-gumroad" id="authSubmitBtn" onclick="handleAuthSubmit()" style="margin-top:16px">Log in →</button>
-    <div class="auth-divider">or</div>
+    <button class="btn-gumroad" id="authSubmitBtn" onclick="handleAuthSubmit()" style="margin-top:16px" data-i18n="auth_submit_login">Log in →</button>
+    <div class="auth-divider" data-i18n="or_word">or</div>
     <button class="btn-google" onclick="handleGoogleAuth()">
       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 7.1 29.6 5 24 5c-7.6 0-14.1 4.3-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5c-2 1.4-4.6 2.3-7.6 2.3-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.8 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.5 5.5C41.4 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
-      Continue with Google
+      <span data-i18n="continue_google">Continue with Google</span>
     </button>
     <button class="btn-faceid" onclick="handleFaceIdAuth()">
-      <span style="font-size:16px">🔐</span> Log in with Face ID
+      <span style="font-size:16px">🔐</span> <span data-i18n="login_faceid">Log in with Face ID</span>
     </button>
     <div class="license-msg" id="authMsg"></div>
     <div class="modal-note">
-      <span id="authSwitchText">No account yet?</span> <a href="#" onclick="toggleAuthMode();return false;" id="authSwitchLink" style="color:var(--matcha-dark);font-weight:600;text-decoration:none">Sign up</a>
+      <span id="authSwitchText" data-i18n="no_account_yet">No account yet?</span> <a href="#" onclick="toggleAuthMode();return false;" id="authSwitchLink" style="color:var(--matcha-dark);font-weight:600;text-decoration:none" data-i18n="sign_up_link">Sign up</a>
     </div>
   </div>
 </div>
@@ -547,10 +547,10 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 <!-- One-time biometric setup prompt, shown right after first login only -->
 <div class="modal-backdrop" id="faceIdPrompt">
   <div class="modal">
-    <h2>Set up faster sign-in?</h2>
-    <p style="font-size:13.5px;color:var(--muted)">Use your fingerprint or face unlock to log in next time — no password needed.</p>
-    <button class="btn-gumroad" onclick="acceptFaceIdPrompt()" style="margin-top:18px">Set it up →</button>
-    <button class="btn-google" onclick="dismissFaceIdPrompt()" style="margin-top:10px">No thanks</button>
+    <h2 data-i18n="biometric_title">Set up faster sign-in?</h2>
+    <p style="font-size:13.5px;color:var(--muted)" data-i18n="biometric_sub">Use your fingerprint or face unlock to log in next time — no password needed.</p>
+    <button class="btn-gumroad" onclick="acceptFaceIdPrompt()" style="margin-top:18px" data-i18n="biometric_setup">Set it up →</button>
+    <button class="btn-google" onclick="dismissFaceIdPrompt()" style="margin-top:10px" data-i18n="biometric_no_thanks">No thanks</button>
   </div>
 </div>
 
@@ -558,7 +558,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   <div class="footer-inner">
     <div class="footer-col">
       <div class="footer-logo">ZAYT<span class="logo-dot">.</span></div>
-      <p>Bilingual CV writing and optimisation, ATS-checked and built for the role you actually want.</p>
+      <p data-i18n="footer_tagline">Bilingual CV writing and optimisation, ATS-checked and built for the role you actually want.</p>
       <div class="social-links">
         <a href="https://www.instagram.com/zayt.cvservices/" target="_blank">Instagram</a>
         <a href="https://wa.me/966580437821" target="_blank">WhatsApp</a>
@@ -566,20 +566,20 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
       </div>
     </div>
     <div class="footer-col">
-      <p style="margin-bottom:8px;color:var(--white);font-weight:700">Contact</p>
+      <p style="margin-bottom:8px;color:var(--white);font-weight:700" data-i18n="footer_contact">Contact</p>
       <p>+966 58 043 7821</p>
       <p>zay.taha@gmail.com</p>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 ZAYT CV Services.</span>
-    <span>Let's rewrite your future.</span>
+    <span data-i18n="footer_copyright">© 2026 ZAYT CV Services.</span>
+    <span data-i18n="footer_slogan">Let's rewrite your future.</span>
   </div>
 </footer>
 
 <div class="sticky-cta" id="stickyCta" onclick="scrollToUpload()">
-  <span>Ready to check your CV?</span>
-  <span class="sticky-cta-arrow">↑ Scan now</span>
+  <span data-i18n="sticky_text">Ready to check your CV?</span>
+  <span class="sticky-cta-arrow" data-i18n="sticky_arrow">↑ Scan now</span>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -645,7 +645,7 @@ function updateAuthUI(){
 async function refreshScanStatus(){
   if (!supabaseClient) return;
   const msg = document.getElementById('scanCreditMsg');
-  if (msg) { msg.style.display = 'block'; msg.className = 'license-msg'; msg.textContent = 'Checking...'; }
+  if (msg) { msg.style.display = 'block'; msg.className = 'license-msg'; msg.textContent = t('checking'); }
   try {
     const { data: sess } = await supabaseClient.auth.getSession();
     const token = sess.session ? sess.session.access_token : null;
@@ -658,10 +658,10 @@ async function refreshScanStatus(){
       updateScanBanner();
       if (msg) {
         if (data.totalAllowed > hadCreditBefore || data.scansRemaining > 0) {
-          msg.textContent = 'Credit confirmed — you can scan again now!'; msg.classList.add('ok');
+          msg.textContent = t('credit_confirmed'); msg.classList.add('ok');
           setTimeout(closeScanCreditModal, 900);
         } else {
-          msg.textContent = "We don't see a new payment yet — it can take a minute, try again shortly.";
+          msg.textContent = t('no_payment_yet_credit');
           msg.classList.add('err');
         }
       }
@@ -715,7 +715,7 @@ async function handleRegisterFaceId(){
 }
 async function handleFaceIdAuth(){
   const email = document.getElementById('authEmail').value.trim();
-  if (!email) { alert('Enter your email above first, then tap Face ID.'); return; }
+  if (!email) { alert(t('enter_email_first')); return; }
   const msg = document.getElementById('authMsg');
   msg.className = 'license-msg'; msg.style.display = 'block'; msg.classList.remove('err','ok');
   try {
@@ -736,10 +736,10 @@ async function handleFaceIdAuth(){
     if (error) throw error;
     currentUser = data.user;
     updateAuthUI();
-    msg.textContent = 'Signed in with Face ID!'; msg.classList.add('ok');
+    msg.textContent = t('signed_in_faceid'); msg.classList.add('ok');
     setTimeout(closeAuth, 800);
   } catch (e) {
-    msg.textContent = e.message || 'Face ID sign-in failed.';
+    msg.textContent = e.message || t('something_wrong');
     msg.classList.add('err');
   }
 }
@@ -758,10 +758,10 @@ function openAuth(){
 function closeAuth(){ document.getElementById('authModal').classList.remove('show'); }
 function toggleAuthMode(){
   authMode = authMode === 'login' ? 'signup' : 'login';
-  document.getElementById('authTitle').textContent = authMode === 'login' ? 'Log in for premium scans' : 'Create your account';
-  document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? 'Log in →' : 'Sign up →';
-  document.getElementById('authSwitchText').textContent = authMode === 'login' ? 'No account yet?' : 'Already have an account?';
-  document.getElementById('authSwitchLink').textContent = authMode === 'login' ? 'Sign up' : 'Log in';
+  document.getElementById('authTitle').textContent = authMode === 'login' ? t('auth_title_login') : t('auth_title_signup');
+  document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t('auth_submit_login') : t('auth_submit_signup');
+  document.getElementById('authSwitchText').textContent = authMode === 'login' ? t('no_account_yet') : t('already_have_account');
+  document.getElementById('authSwitchLink').textContent = authMode === 'login' ? t('sign_up_link') : t('log_in_link');
   document.getElementById('authMsg').style.display = 'none';
 }
 async function handleAuthSubmit(){
@@ -770,25 +770,25 @@ async function handleAuthSubmit(){
   const msg = document.getElementById('authMsg');
   msg.className = 'license-msg'; msg.style.display = 'block'; msg.classList.remove('err','ok');
   if (!email || password.length < 6) {
-    msg.textContent = 'Enter a valid email and a password of at least 6 characters.';
+    msg.textContent = currentLang === 'ar' ? 'اكتب إيميل صحيح وكلمة مرور ٦ أحرف على الأقل.' : 'Enter a valid email and a password of at least 6 characters.';
     msg.classList.add('err'); return;
   }
-  msg.textContent = 'Please wait...';
+  msg.textContent = t('checking');
   try {
     const fn = authMode === 'login' ? 'signInWithPassword' : 'signUp';
     const { data, error } = await supabaseClient.auth[fn]({ email, password });
     if (error) throw error;
     if (authMode === 'signup' && !data.session) {
-      msg.textContent = 'Check your email to confirm your account, then log in.';
+      msg.textContent = t('confirm_email_first');
       msg.classList.add('ok');
     } else {
-      msg.textContent = 'Signed in!'; msg.classList.add('ok');
+      msg.textContent = t('signed_in'); msg.classList.add('ok');
       currentUser = data.user;
       updateAuthUI();
       setTimeout(closeAuth, 800);
     }
   } catch (e) {
-    msg.textContent = e.message || 'Something went wrong.';
+    msg.textContent = e.message || t('something_wrong');
     msg.classList.add('err');
   }
 }
@@ -797,6 +797,8 @@ initAuth();
 let extractedText = '';
 let currentReportId = null;
 let lastResult = null;
+let lastResultIsSample = false;
+let lastResultIsUnlocked = false;
 let unlocked = false;
 
 const demoReport = {
@@ -829,29 +831,176 @@ const i18n = {
     eyebrow: 'no fabricated metrics, ever', sub: 'Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.',
     counter_label: 'resumes scanned this month', trust1: 'scoring dimensions', trust2: 'job markets supported', trust3: 'Instant', trust3b: 'results',
     step1: 'Upload your CV', step2: 'We scan it like a real ATS would', step3: 'You get a plan to fix it',
-    nav_faq: 'FAQ', nav_cta: 'Get expert human review',
-    heroH1: 'Same resume.<br><span>Different reader.</span>'
+    nav_faq: 'FAQ', nav_cta: 'Get expert human review', nav_login: 'Log in', nav_add_faceid: '+ Face ID',
+    heroH1: 'Same resume.<br><span>Different reader.</span>',
+    mac_title: 'ATS Resume Checker',
+    step_label_1: 'Upload your resume', step_label_2: 'Add job details for a keyword match score',
+    drop_title: 'Drop your CV here', drop_sub: 'PDF, Word, or plain text · Max 5MB', choose_file: 'Choose file',
+    or_divider: 'or paste your CV text', cv_paste_placeholder: 'Paste your CV text here directly',
+    job_title_label: 'Target job title (optional)', job_title_placeholder: 'e.g. Data Analyst',
+    country_label: 'Country',
+    country_SA: 'Saudi Arabia', country_AE: 'United Arab Emirates', country_QA: 'Qatar', country_KW: 'Kuwait',
+    country_BH: 'Bahrain', country_OM: 'Oman', country_MA: 'Morocco', country_EG: 'Egypt',
+    country_US: 'United States', country_GB: 'United Kingdom', country_CA: 'Canada', country_OTHER: 'Global / Other',
+    job_desc_label: 'Job description (optional — improves keyword match accuracy)',
+    job_desc_placeholder: 'Paste the job posting here for a tailored keyword match score',
+    run_scan: 'Run ATS scan', sample_link: 'See an example report first →',
+    review_title: 'Used the scan? Tell us how it went.', review_sub: 'Real feedback helps us improve it — takes 30 seconds.', review_cta: 'Submit a review →',
+    faq_title: 'Frequently asked', faq_sub: 'Everything you need to know before you upload',
+    unlock_title: 'Unlock your full report', unlock_sub: 'See every strength, every fix, your full action plan, and all rewrite examples for this scan.',
+    unlock_price_note: 'one-time, unlocks this report',
+    unlock_li1: 'Full report for this scan', unlock_li2: 'Your complete action plan', unlock_li3: 'Pay once — never billed again',
+    unlock_btn: 'Unlock for $4.99 →', check_btn: 'Check', email_paid_placeholder: 'Email you paid with',
+    unlock_note: 'Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. After paying, come back and check with the same email you used at checkout.',
+    credit_title: "You've used your 3 free premium scans", credit_sub: 'Buy 1 more premium scan (powered by our most accurate model) — no subscription, just this one scan.',
+    credit_price_note: 'one-time, adds 1 more scan',
+    credit_li1: '1 additional premium scan, full report', credit_li2: 'Uses our more accurate model', credit_li3: 'Buy more any time, one at a time',
+    credit_btn: 'Buy 1 scan for $7.99 →', credit_check_btn: "I've paid — check now",
+    credit_note: 'Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. Checking usually works within a minute of payment.',
+    auth_title_login: 'Log in for premium scans', auth_title_signup: 'Create your account',
+    auth_sub: 'Signed-in scans run on our more accurate model — free to create an account.',
+    email_label: 'Email', password_label: 'Password', password_placeholder: 'At least 6 characters',
+    auth_submit_login: 'Log in →', auth_submit_signup: 'Sign up →',
+    or_word: 'or', continue_google: 'Continue with Google', login_faceid: 'Log in with Face ID',
+    no_account_yet: 'No account yet?', already_have_account: 'Already have an account?', sign_up_link: 'Sign up', log_in_link: 'Log in',
+    biometric_title: 'Set up faster sign-in?', biometric_sub: 'Use your fingerprint or face unlock to log in next time — no password needed.',
+    biometric_setup: 'Set it up →', biometric_no_thanks: 'No thanks',
+    footer_tagline: 'Bilingual CV writing and optimisation, ATS-checked and built for the role you actually want.',
+    footer_contact: 'Contact', footer_copyright: '© 2026 ZAYT CV Services.', footer_slogan: "Let's rewrite your future.",
+    sticky_text: 'Ready to check your CV?', sticky_arrow: '↑ Scan now',
+    banner_guest: 'Unlimited free scans as a guest (partial report). Log in for full premium reports — 3 free.',
+    banner_no_status: 'You have {n} free premium scans (full reports).',
+    banner_out: "You've used all {total} premium scans. Buy 1 more for $7.99.",
+    banner_left: '{left} of {total} premium scans left.',
+    faq_data: [
+      ['Is the CV analysis really free?', 'Yes — every CV gets a full score breakdown, one strength, and one fix at no cost. Unlocking the rest of the strengths, fixes, and quick wins is $4.99 per report.'],
+      ['How is this different from other ATS checkers?', 'Most tools only give a keyword-match score. This one checks parse-ability, keyword match, achievement quality, and tone — reading your resume the way both the ATS and the human recruiter behind it would.'],
+      ['Does it work outside the GCC?', 'Yes. Choose your target job market (GCC, North America, Europe, or Global) before analysing, and the feedback adjusts to that market\'s conventions.'],
+      ['Is my CV data stored or shared?', 'Your CV text is only used to generate your report. It isn\'t sold, shared, or used to train external models.'],
+      ['What if I want a full rewrite, not just feedback?', 'That\'s exactly what ZAYT CV Services does — book a rewrite via WhatsApp and we\'ll take it from feedback to a finished, ATS-optimised CV.']
+    ],
+    results_title: 'Your ATS Report', results_scanned: 'Scanned', results_working: "What's working", results_weak: 'Weaknesses',
+    results_fixes: 'Fixes to make', results_ats_flags: 'Technical ATS flags', results_action_plan: 'Your action plan',
+    results_rewrite_label: "See how we'd fix real lines from your CV", results_cta_title: 'Want a professional rewrite?',
+    results_cta_sub: 'A fully rewritten, ATS-optimised CV tailored to your target role — in Arabic or English.', results_cta_btn: 'Get expert human review →',
+    loop_title: "That's your full scan.", loop_sub: "You now know exactly what's holding your CV back — and what to do about it.",
+    sample_badge: 'Example report — try it yourself below ↓',
+    score_impact: 'Impact', score_ats: 'Can a computer read it?', score_tone: 'Tone', score_region: 'Fits your country',
+    score_achievement: 'Real results shown', score_structure: 'Easy to scan',
+    unlock_full_report_btn: 'Unlock full report',
+    checking: 'Checking...', something_wrong: 'Something went wrong — try again.',
+    enter_email_paid: 'Enter the email you paid with.', run_scan_first: 'Run a scan first, then come back to unlock it.',
+    payment_confirmed_report: 'Payment confirmed — full report unlocked! Emailing you a copy...',
+    no_payment_yet_report: "We don't see a payment from that email yet — it can take a minute after checkout, try again shortly.",
+    credit_confirmed: 'Credit confirmed — you can scan again now!',
+    no_payment_yet_credit: "We don't see a new payment yet — it can take a minute, try again shortly.",
+    signed_in: 'Signed in!', confirm_email_first: 'Check your email to confirm your account, then log in.',
+    signed_in_faceid: 'Signed in with Face ID!', enter_email_first: 'Enter your email above first, then tap Face ID.'
   },
   ar: {
-    eyebrow: 'بدون أي أرقام ملفّقة، أبداً', sub: 'أغلب السير الذاتية يتم استبعادها قبل أن يراها أي مسؤول توظيف. ارفع سيرتك لترى كيف تقرأها أنظمة التوظيف الآلية — وماذا يجب إصلاحه.',
-    counter_label: 'سيرة ذاتية تم فحصها حتى الآن', trust1: 'معايير تقييم', trust2: 'أسواق عمل مدعومة', trust3: 'نتائج', trust3b: 'فورية',
-    step1: 'ارفع سيرتك الذاتية', step2: 'نفحصها كما تفحصها أنظمة التوظيف', step3: 'تحصل على خطة لإصلاحها',
-    nav_faq: 'الأسئلة الشائعة', nav_cta: 'مراجعة بشرية احترافية',
-    heroH1: 'نفس السيرة الذاتية.<br><span>قارئ مختلف.</span>'
+    eyebrow: 'بدون أرقام ملفّقة أبداً', sub: 'أغلب السير الذاتية تنرفض قبل لا تصل لأي مسؤول توظيف. ارفع سيرتك وشوف بالضبط كيف تقرأها أنظمة التوظيف الآلية، وشنو تحتاج تصلّح.',
+    counter_label: 'سيرة ذاتية انفحصت الشهر هذا', trust1: 'معايير تقييم', trust2: 'أسواق عمل مدعومة', trust3: 'فورية', trust3b: 'نتائج',
+    step1: 'ارفع سيرتك الذاتية', step2: 'نفحصها زي ما تفحصها أنظمة التوظيف بالضبط', step3: 'تاخذ خطة تصلّح فيها كل شي',
+    nav_faq: 'الأسئلة الشائعة', nav_cta: 'مراجعة بشرية محترفة', nav_login: 'دخول', nav_add_faceid: '+ بصمة',
+    heroH1: 'نفس السيرة الذاتية.<br><span>قارئ ثاني خالص.</span>',
+    mac_title: 'فاحص السيرة الذاتية',
+    step_label_1: 'ارفع سيرتك الذاتية', step_label_2: 'ضيف تفاصيل الوظيفة عشان درجة تطابق الكلمات',
+    drop_title: 'حط سيرتك هنا', drop_sub: 'PDF أو Word أو نص عادي · أقصى حجم 5MB', choose_file: 'اختر ملف',
+    or_divider: 'أو الصق نص سيرتك', cv_paste_placeholder: 'الصق نص سيرتك الذاتية هنا مباشرة',
+    job_title_label: 'المسمى الوظيفي المستهدف (اختياري)', job_title_placeholder: 'مثال: محلل بيانات',
+    country_label: 'الدولة',
+    country_SA: 'السعودية', country_AE: 'الإمارات', country_QA: 'قطر', country_KW: 'الكويت',
+    country_BH: 'البحرين', country_OM: 'عُمان', country_MA: 'المغرب', country_EG: 'مصر',
+    country_US: 'أمريكا', country_GB: 'بريطانيا', country_CA: 'كندا', country_OTHER: 'عالمي / ثاني',
+    job_desc_label: 'الوصف الوظيفي (اختياري — يزيد دقة تطابق الكلمات)',
+    job_desc_placeholder: 'الصق إعلان الوظيفة هنا عشان تطابق دقيق للكلمات',
+    run_scan: 'ابدأ الفحص', sample_link: 'شوف تقرير تجريبي أول ←',
+    review_title: 'جربت الفحص؟ قولنا رأيك.', review_sub: 'رأيك الصادق يساعدنا نطوّر الأداة — يأخذ ٣٠ ثانية بس.', review_cta: 'أرسل تقييمك ←',
+    faq_title: 'الأسئلة الشائعة', faq_sub: 'كل اللي تحتاج تعرفه قبل ما ترفع سيرتك',
+    unlock_title: 'افتح تقريرك الكامل', unlock_sub: 'شوف كل نقاط قوتك، كل شي تحتاج تصلحه، خطة العمل كاملة، وكل أمثلة إعادة الصياغة لهذا الفحص.',
+    unlock_price_note: 'دفعة وحدة، تفتح هذا التقرير بس',
+    unlock_li1: 'التقرير كامل لهذا الفحص', unlock_li2: 'خطة عملك كاملة', unlock_li3: 'تدفع مرة وحدة — ما راح نخصم منك ثاني',
+    unlock_btn: 'افتحه بـ ٤.٩٩$ ←', check_btn: 'تحقق', email_paid_placeholder: 'الإيميل اللي دفعت فيه',
+    unlock_note: 'السعر يظهر بعملتك المحلية تقريبياً — صفحة الدفع في Gumroad ممكن تظهره بالدولار. بعد الدفع، ارجع وتحقق بنفس الإيميل اللي دفعت فيه.',
+    credit_title: 'خلّصت فحوصاتك المجانية الثلاثة', credit_sub: 'اشترِ فحص مميز واحد زيادة (يشتغل على أدق موديل عندنا) — بدون اشتراك، فحص واحد بس.',
+    credit_price_note: 'دفعة وحدة، تضيف فحص واحد زيادة',
+    credit_li1: 'فحص مميز إضافي، تقرير كامل', credit_li2: 'يستخدم أدق موديل عندنا', credit_li3: 'تقدر تشتري أكثر وقت ما تبي، وحدة وحدة',
+    credit_btn: 'اشترِ فحص بـ ٧.٩٩$ ←', credit_check_btn: 'دفعت — تحقق الحين',
+    credit_note: 'السعر يظهر بعملتك المحلية تقريباً — صفحة الدفع في Gumroad ممكن تظهره بالدولار. عادة التحقق يشتغل خلال دقيقة من الدفع.',
+    auth_title_login: 'سجّل دخول عشان الفحوصات المميزة', auth_title_signup: 'أنشئ حسابك',
+    auth_sub: 'الفحوصات بعد تسجيل الدخول تشتغل على موديل أدق — إنشاء الحساب مجاني.',
+    email_label: 'الإيميل', password_label: 'كلمة المرور', password_placeholder: '٦ أحرف على الأقل',
+    auth_submit_login: 'دخول ←', auth_submit_signup: 'إنشاء حساب ←',
+    or_word: 'أو', continue_google: 'تسجيل عبر Google', login_faceid: 'دخول بالبصمة',
+    no_account_yet: 'ما عندك حساب؟', already_have_account: 'عندك حساب أصلاً؟', sign_up_link: 'أنشئ حساب', log_in_link: 'دخول',
+    biometric_title: 'تبي تسجيل دخول أسرع؟', biometric_sub: 'استخدم بصمتك أو بصمة الوجه عشان تدخل بسرعة المرة الجاية — بدون كلمة مرور.',
+    biometric_setup: 'فعّلها ←', biometric_no_thanks: 'لا، شكراً',
+    footer_tagline: 'كتابة وتحسين سير ذاتية بالعربي والإنجليزي، مفحوصة لأنظمة ATS ومبنية على الوظيفة اللي تبيها.',
+    footer_contact: 'تواصل معنا', footer_copyright: '© 2026 خدمات ZAYT للسير الذاتية.', footer_slogan: 'خلّنا نعيد كتابة مستقبلك.',
+    sticky_text: 'جاهز تفحص سيرتك؟', sticky_arrow: '↑ افحص الحين',
+    banner_guest: 'فحوصات مجانية بلا حدود كضيف (تقرير جزئي). سجّل دخول عشان تقارير مميزة كاملة — ٣ فحوصات مجانية.',
+    banner_no_status: 'عندك {n} فحوصات مميزة مجانية (تقارير كاملة).',
+    banner_out: 'خلّصت كل الـ {total} فحوصات المميزة. اشترِ وحدة زيادة بـ ٧.٩٩$.',
+    banner_left: 'باقي لك {left} من {total} فحوصات مميزة.',
+    faq_data: [
+      ['هل فحص السيرة الذاتية مجاني فعلاً؟', 'إي والله — كل سيرة تاخذ تقييم كامل، نقطة قوة، وشي واحد تصلحه مجاناً. باقي نقاط القوة والإصلاحات وخطة العمل تفتحها بـ ٤.٩٩$ للتقرير.'],
+      ['شنو الفرق بينه وبين فاحصات ATS الثانية؟', 'أغلب الأدوات تعطيك بس درجة تطابق كلمات. هذي الأداة تفحص قابلية القراءة، تطابق الكلمات، جودة الإنجازات، والأسلوب — تقرأ سيرتك زي ما يقرأها نظام التوظيف والمسؤول البشري وراه.'],
+      ['تشتغل برا دول الخليج؟', 'إي، تقدر تختار سوق العمل اللي تستهدفه (خليجي، أمريكا، أوروبا، أو عالمي) قبل الفحص، والملاحظات تتكيف على أساسه.'],
+      ['بياناتي بتنحفظ أو تتشارك مع أحد؟', 'نص سيرتك يستخدم بس عشان يطلع التقرير. ما نبيعه، ما نشاركه، وما نستخدمه لتدريب أي موديل خارجي.'],
+      ['وش إذا أبي إعادة كتابة كاملة مو بس ملاحظات؟', 'هذا بالضبط اللي تسويه خدمات ZAYT — احجز إعادة كتابة عبر واتساب ونكمل من الملاحظات لسيرة ذاتية جاهزة ومتوافقة مع ATS.']
+    ],
+    results_title: 'تقرير فحص سيرتك', results_scanned: 'تاريخ الفحص', results_working: 'اللي شغال زين', results_weak: 'نقاط الضعف',
+    results_fixes: 'أشياء تحتاج تصلحها', results_ats_flags: 'ملاحظات تقنية على ATS', results_action_plan: 'خطة عملك',
+    results_rewrite_label: 'شوف كيف بنصلح أسطر حقيقية من سيرتك', results_cta_title: 'تبي إعادة كتابة احترافية؟',
+    results_cta_sub: 'سيرة ذاتية معاد كتابتها بالكامل ومتوافقة مع ATS، مخصصة لوظيفتك المستهدفة — بالعربي أو الإنجليزي.', results_cta_btn: 'احصل على مراجعة بشرية ←',
+    loop_title: 'خلص، هذا فحصك الكامل.', loop_sub: 'الحين تعرف بالضبط شنو اللي يعطل سيرتك، وشنو تسوي عشان تصلحه.',
+    sample_badge: 'تقرير تجريبي — جرّب سيرتك أنت تحت ↓',
+    score_impact: 'التأثير', score_ats: 'يقدر الكمبيوتر يقرأها؟', score_tone: 'الأسلوب', score_region: 'تناسب دولتك',
+    score_achievement: 'إنجازات حقيقية موضحة', score_structure: 'سهلة القراءة السريعة',
+    unlock_full_report_btn: 'افتح التقرير الكامل',
+    checking: 'نتحقق...', something_wrong: 'صار خطأ — حاول مرة ثانية.',
+    enter_email_paid: 'اكتب الإيميل اللي دفعت فيه.', run_scan_first: 'اعمل فحص أول، وبعدين ارجع تفتحه.',
+    payment_confirmed_report: 'تأكد الدفع — التقرير الكامل انفتح! جاري إرسال نسخة لإيميلك...',
+    no_payment_yet_report: 'ما شفنا دفعة من هذا الإيميل بعد — ممكن تاخذ دقيقة بعد الدفع، حاول مرة ثانية بعد شوي.',
+    credit_confirmed: 'تأكد الرصيد — تقدر تفحص مرة ثانية الحين!',
+    no_payment_yet_credit: 'ما شفنا دفعة جديدة بعد — ممكن تاخذ دقيقة، حاول مرة ثانية بعد شوي.',
+    signed_in: 'تم تسجيل الدخول!', confirm_email_first: 'شيك إيميلك عشان تأكد حسابك، وبعدين سجّل دخول.',
+    signed_in_faceid: 'تم الدخول بالبصمة!', enter_email_first: 'اكتب إيميلك فوق أول، وبعدين اضغط البصمة.'
   }
 };
 let currentLang = 'en';
+function t(key){ return (i18n[currentLang] && i18n[currentLang][key]) || (i18n.en && i18n.en[key]) || key; }
+
 function toggleLang(){
   currentLang = currentLang === 'en' ? 'ar' : 'en';
+  applyI18n();
+}
+
+function applyI18n(){
   const dict = i18n[currentLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (dict[key]) el.textContent = dict[key];
   });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (dict[key]) el.setAttribute('placeholder', dict[key]);
+  });
   document.getElementById('heroH1').innerHTML = dict.heroH1;
   document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
   document.body.style.fontFamily = currentLang === 'ar' ? "'Noto Kufi Arabic','Inter',sans-serif" : "'Inter',sans-serif";
   document.getElementById('langBtn').textContent = currentLang === 'ar' ? 'English' : 'عربي';
+
+  // Auth modal title/submit button depend on login vs signup mode
+  document.getElementById('authTitle').textContent = authMode === 'login' ? t('auth_title_login') : t('auth_title_signup');
+  document.getElementById('authSubmitBtn').textContent = authMode === 'login' ? t('auth_submit_login') : t('auth_submit_signup');
+  document.getElementById('authSwitchText').textContent = authMode === 'login' ? t('no_account_yet') : t('already_have_account');
+  document.getElementById('authSwitchLink').textContent = authMode === 'login' ? t('sign_up_link') : t('log_in_link');
+
+  rebuildFaq();
+  updateScanBanner();
+  // If a report is already on screen, re-render it in the new language.
+  if (lastResult) renderResults(lastResult, lastResultIsSample, lastResultIsUnlocked);
 }
 
 const dropArea = document.getElementById('dropArea');
@@ -1007,22 +1156,26 @@ async function analyzeCV() {
   progressFill.style.width = '100%';
   setTimeout(()=>{ progressTrack.classList.remove('show'); progressFill.style.width='0%'; }, 500);
   btn.classList.remove('loading');
-  btn.innerHTML = 'Run ATS scan';
+  btn.innerHTML = t('run_scan');
 }
 
 function getBarClass(v) { return v >= 70 ? 'high' : v >= 45 ? 'mid' : 'low'; }
 
-const labels = {
-  impact:'Impact', ats:'Can a computer read it?',
-  tone:'Tone', regionFit:'Fits your country',
-  achievementRatio:'Real results shown', structure:'Easy to scan'
-};
+function getLabels(){
+  return {
+    impact: t('score_impact'), ats: t('score_ats'),
+    tone: t('score_tone'), regionFit: t('score_region'),
+    achievementRatio: t('score_achievement'), structure: t('score_structure')
+  };
+}
 
 function matchBadge(r){
   if (!r.keywordMatch && r.keywordMatch !== 0) return '';
   const pct = r.keywordMatch;
   const cls = pct >= 70 ? '' : pct >= 45 ? 'mid' : 'low';
-  return `<div class="match-badge"><div class="match-badge-ring ${cls}" style="--pct:${pct}"><span>${pct}%</span></div><div><div class="match-badge-label">Keyword match</div><div class="match-badge-sub">vs. the job description you pasted</div></div></div>`;
+  const label = currentLang === 'ar' ? 'تطابق الكلمات' : 'Keyword match';
+  const sub = currentLang === 'ar' ? 'مقارنة بالوصف الوظيفي اللي لصقته' : 'vs. the job description you pasted';
+  return `<div class="match-badge"><div class="match-badge-ring ${cls}" style="--pct:${pct}"><span>${pct}%</span></div><div><div class="match-badge-label">${label}</div><div class="match-badge-sub">${sub}</div></div></div>`;
 }
 
 function lockedList(items, isUnlocked, teaseCount, noun){
@@ -1031,16 +1184,20 @@ function lockedList(items, isUnlocked, teaseCount, noun){
   const locked = items.slice(teaseCount);
   const shownHtml = `<ul>${shown.map(i=>`<li>${i}</li>`).join('')}</ul>`;
   if (!locked.length) return shownHtml;
+  const moreLabel = currentLang === 'ar' ? `+${locked.length} أكثر` : `+${locked.length} more ${noun}`;
   return `${shownHtml}<div class="lock-wrap" style="margin-top:12px">
     <ul class="locked-item">${locked.map(i=>`<li>${i}</li>`).join('')}</ul>
     <div class="lock-overlay">
-      <div class="lock-count">+${locked.length} more ${noun}</div>
-      <button class="btn-unlock-small" onclick="openUnlock()">Unlock full report</button>
+      <div class="lock-count">${moreLabel}</div>
+      <button class="btn-unlock-small" onclick="openUnlock()">${t('unlock_full_report_btn')}</button>
     </div>
   </div>`;
 }
 
 function renderResults(r, isSample, isUnlocked) {
+  lastResultIsSample = isSample;
+  lastResultIsUnlocked = isUnlocked;
+  const labels = getLabels();
   const bars = Object.entries(r.scores).map(([k,v]) => {
     const label = labels[k] || k;
     return `<div class="score-item"><div class="score-item-header"><span>${label}</span><span class="score-item-val">${v}</span></div><div class="bar-track"><div class="bar-fill ${getBarClass(v)}" data-width="${v}" style="width:0%"></div></div></div>`;
@@ -1048,52 +1205,60 @@ function renderResults(r, isSample, isUnlocked) {
 
   const AVG_SCORE = 54;
   const diff = r.overall - AVG_SCORE;
-  const compareHtml = `<div class="compare-line">${diff >= 0 ? '↑' : '↓'} The average resume we scan scores <b>${AVG_SCORE}</b> — yours scored <b>${r.overall}</b> ${diff >= 0 ? `(${diff} points above average)` : `(${Math.abs(diff)} points below average)`}</div>`;
+  const compareHtml = currentLang === 'ar'
+    ? `<div class="compare-line">${diff >= 0 ? '↑' : '↓'} متوسط درجة السير الذاتية اللي نفحصها <b>${AVG_SCORE}</b> — سيرتك حصلت <b>${r.overall}</b> ${diff >= 0 ? `(أعلى بـ ${diff} نقطة من المتوسط)` : `(أقل بـ ${Math.abs(diff)} نقطة من المتوسط)`}</div>`
+    : `<div class="compare-line">${diff >= 0 ? '↑' : '↓'} The average resume we scan scores <b>${AVG_SCORE}</b> — yours scored <b>${r.overall}</b> ${diff >= 0 ? `(${diff} points above average)` : `(${Math.abs(diff)} points below average)`}</div>`;
 
-  // Free scans show roughly 1/3 of each list; paid/unlocked shows everything.
+  const actionPlanReadyLabel = currentLang === 'ar' ? 'خطة عملك جاهزة' : 'Your action plan is ready';
+  const unlockToSeeLabel = currentLang === 'ar' ? 'افتح التقرير الكامل عشان تشوفها' : 'Unlock the full report to see it';
+
   const quickWinsHtml = isUnlocked
     ? `<ol>${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>`
     : `<div class="lock-wrap">
         <ol class="locked-item">${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>
         <div class="lock-overlay">
-          <div class="lock-count" style="color:var(--white)">Your action plan is ready</div>
-          <p style="color:var(--sage-pale)">Unlock the full report to see it</p>
-          <button class="btn-unlock-small" style="background:var(--white);color:var(--matcha-deep)" onclick="openUnlock()">Unlock full report</button>
+          <div class="lock-count" style="color:var(--white)">${actionPlanReadyLabel}</div>
+          <p style="color:var(--sage-pale)">${unlockToSeeLabel}</p>
+          <button class="btn-unlock-small" style="background:var(--white);color:var(--matcha-deep)" onclick="openUnlock()">${t('unlock_full_report_btn')}</button>
         </div>
       </div>`;
+
+  const beforeLabel = currentLang === 'ar' ? 'قبل' : 'Before';
+  const afterLabel = currentLang === 'ar' ? 'بعد' : 'After';
 
   const rewriteHtml = (r.rewrittenExamples && r.rewrittenExamples.length) ? (() => {
     const shown = isUnlocked ? r.rewrittenExamples : r.rewrittenExamples.slice(0, 1);
     const locked = isUnlocked ? [] : r.rewrittenExamples.slice(1);
     const shownHtml = shown.map(ex => `
       <div class="rewrite-pair">
-        <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${ex.before}</div>
-        <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
+        <div class="rewrite-row before"><span class="rewrite-tag">${beforeLabel}</span>${ex.before}</div>
+        <div class="rewrite-row after"><span class="rewrite-tag">${afterLabel}</span>${ex.after}</div>
       </div>`).join('');
     const lockedHtml = locked.length ? `
       <div class="lock-wrap" style="margin-top:12px">
         <div class="locked-item">${locked.map(ex => `
           <div class="rewrite-pair">
-            <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${ex.before}</div>
-            <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
+            <div class="rewrite-row before"><span class="rewrite-tag">${beforeLabel}</span>${ex.before}</div>
+            <div class="rewrite-row after"><span class="rewrite-tag">${afterLabel}</span>${ex.after}</div>
           </div>`).join('')}</div>
         <div class="lock-overlay">
-          <button class="btn-unlock-small" onclick="openUnlock()">Unlock full report</button>
+          <button class="btn-unlock-small" onclick="openUnlock()">${t('unlock_full_report_btn')}</button>
         </div>
       </div>` : '';
     return `<div class="rewrite-card fade-up">
-      <div class="rewrite-label">See how we'd fix real lines from your CV</div>
+      <div class="rewrite-label">${t('results_rewrite_label')}</div>
       ${shownHtml}${lockedHtml}
     </div>`;
   })() : '';
 
+  const dateLocale = currentLang === 'ar' ? 'ar-SA' : 'en-GB';
   document.getElementById('results').innerHTML = `
     <div class="rx-card fade-up">
-      ${isSample ? '<div class="sample-badge">Example report — try it yourself below ↓</div>' : ''}
+      ${isSample ? `<div class="sample-badge">${t('sample_badge')}</div>` : ''}
       <div class="rx-header">
         <div>
-          <h2>Your ATS Report</h2>
-          <p>Scanned ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</p>
+          <h2>${t('results_title')}</h2>
+          <p>${t('results_scanned')} ${new Date().toLocaleDateString(dateLocale,{day:'numeric',month:'short',year:'numeric'})}</p>
         </div>
         <div class="score-ring" style="--pct:${r.overall}"><span>${r.overall}</span></div>
       </div>
@@ -1103,31 +1268,31 @@ function renderResults(r, isSample, isUnlocked) {
       <div class="verdict ${r.verdict}">${r.verdictText}</div>
     </div>
     <div class="feedback-grid three-col fade-up" style="animation-delay:.05s">
-      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3>${lockedList(r.wins, isUnlocked, 2, 'strengths')}</div>
-      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3>${lockedList(r.weaknesses, isUnlocked, 2, 'weaknesses')}</div>
-      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>Fixes to make</h3>${lockedList(r.fixes, isUnlocked, 2, 'fixes')}</div>
+      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>${t('results_working')}</h3>${lockedList(r.wins, isUnlocked, 2, 'strengths')}</div>
+      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>${t('results_weak')}</h3>${lockedList(r.weaknesses, isUnlocked, 2, 'weaknesses')}</div>
+      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>${t('results_fixes')}</h3>${lockedList(r.fixes, isUnlocked, 2, 'fixes')}</div>
     </div>
     <div class="feedback-card ats-flags fade-up" style="margin-bottom:20px;animation-delay:.1s">
-      <h3><span class="tag-icon" style="background:var(--ink)">⚙</span>Technical ATS flags</h3>
+      <h3><span class="tag-icon" style="background:var(--ink)">⚙</span>${t('results_ats_flags')}</h3>
       ${lockedList(r.atsIssues, isUnlocked, 2, 'flags')}
     </div>
     <div class="quick-wins fade-up" style="animation-delay:.15s">
-      <h3>Your action plan</h3>
+      <h3>${t('results_action_plan')}</h3>
       ${quickWinsHtml}
     </div>
     ${rewriteHtml}
     <div class="cta-strip fade-up" style="animation-delay:.2s">
       <div>
-        <h3>Want a professional rewrite?</h3>
-        <p>A fully rewritten, ATS-optimised CV tailored to your target role — in Arabic or English.</p>
+        <h3>${t('results_cta_title')}</h3>
+        <p>${t('results_cta_sub')}</p>
       </div>
-      <a href="https://wa.me/966580437821" class="btn-cta" target="_blank">Get expert human review →</a>
+      <a href="https://wa.me/966580437821" class="btn-cta" target="_blank">${t('results_cta_btn')}</a>
     </div>
     ${isUnlocked ? `<div class="loop-close fade-up" style="animation-delay:.25s">
       <div class="loop-num">✓</div>
       <div>
-        <div class="loop-title">That's your full scan.</div>
-        <div class="loop-sub">You now know exactly what's holding your CV back — and what to do about it.</div>
+        <div class="loop-title">${t('loop_title')}</div>
+        <div class="loop-sub">${t('loop_sub')}</div>
       </div>
     </div>` : ''}`;
   document.getElementById('results').style.display = 'block';
@@ -1144,21 +1309,21 @@ function updateScanBanner(){
   const el = document.getElementById('scanBanner');
   if (!el) return;
   if (!isLoggedIn()) {
-    el.textContent = 'Unlimited free scans as a guest (partial report). Log in for full premium reports — 3 free.';
+    el.textContent = t('banner_guest');
     el.className = 'scan-banner';
     return;
   }
   if (!lastScanStatus) {
-    el.textContent = `You have ${FREE_PREMIUM_SCANS} free premium scans (full reports).`;
+    el.textContent = t('banner_no_status').replace('{n}', FREE_PREMIUM_SCANS);
     el.className = 'scan-banner';
     return;
   }
   const left = lastScanStatus.scansRemaining;
   if (left <= 0) {
-    el.textContent = `You've used all ${lastScanStatus.totalAllowed} premium scans. Buy 1 more for $7.99.`;
+    el.textContent = t('banner_out').replace('{total}', lastScanStatus.totalAllowed);
     el.className = 'scan-banner out';
   } else {
-    el.textContent = `${left} of ${lastScanStatus.totalAllowed} premium scans left.`;
+    el.textContent = t('banner_left').replace('{left}', left).replace('{total}', lastScanStatus.totalAllowed);
     el.className = left === 1 ? 'scan-banner low' : 'scan-banner';
   }
 }
@@ -1181,7 +1346,7 @@ updateScanBanner();
 function openUnlock(){
   const priceEl = document.getElementById('modalPrice');
   const price = formatPrice(4.99);
-  priceEl.innerHTML = `${price} <span>one-time, unlocks this report</span>`;
+  priceEl.innerHTML = `${price} <span>${t('unlock_price_note')}</span>`;
   if (isLoggedIn() && currentUser.email) {
     document.getElementById('licenseInput').value = currentUser.email;
   }
@@ -1193,9 +1358,9 @@ async function verifyReportUnlock(){
   const email = document.getElementById('licenseInput').value.trim();
   const msg = document.getElementById('licenseMsg');
   msg.className = 'license-msg'; msg.style.display='block';
-  if (!email) { msg.textContent = 'Enter the email you paid with.'; msg.classList.add('err'); return; }
-  if (!currentReportId) { msg.textContent = 'Run a scan first, then come back to unlock it.'; msg.classList.add('err'); return; }
-  msg.textContent = 'Checking...'; msg.classList.remove('err','ok');
+  if (!email) { msg.textContent = t('enter_email_paid'); msg.classList.add('err'); return; }
+  if (!currentReportId) { msg.textContent = t('run_scan_first'); msg.classList.add('err'); return; }
+  msg.textContent = t('checking'); msg.classList.remove('err','ok');
   try {
     const res = await fetch('/api/unlock-report', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -1203,43 +1368,41 @@ async function verifyReportUnlock(){
     });
     const data = await res.json();
     if (data.unlocked) {
-      msg.textContent = 'Payment confirmed — full report unlocked! Emailing you a copy...'; msg.classList.add('ok');
+      msg.textContent = t('payment_confirmed_report'); msg.classList.add('ok');
       lastResult = data.result;
       renderResults(lastResult, false, true);
       sendReportEmail(email, lastResult);
       setTimeout(closeUnlock, 900);
     } else {
-      msg.textContent = data.error || "We don't see a payment from that email yet — it can take a minute after checkout, try again shortly.";
+      msg.textContent = data.error || t('no_payment_yet_report');
       msg.classList.add('err');
     }
   } catch {
-    msg.textContent = 'Something went wrong — try again.'; msg.classList.add('err');
+    msg.textContent = t('something_wrong'); msg.classList.add('err');
   }
 }
 
 function openScanCreditModal(){
   const priceEl = document.getElementById('scanCreditPrice');
   const price = formatPrice(7.99);
-  priceEl.innerHTML = `${price} <span>one-time, adds 1 more scan</span>`;
+  priceEl.innerHTML = `${price} <span>${t('credit_price_note')}</span>`;
   document.getElementById('scanCreditModal').classList.add('show');
 }
 function closeScanCreditModal(){ document.getElementById('scanCreditModal').classList.remove('show'); }
 
-// FAQ
-const faqData = [
-  ['Is the CV analysis really free?', 'Yes — every CV gets a full score breakdown, one strength, and one fix at no cost. Unlocking the rest of the strengths, fixes, and quick wins is $4.99 per report.'],
-  ['How is this different from other ATS checkers?', 'Most tools only give a keyword-match score. This one checks parse-ability, keyword match, achievement quality, and tone — reading your resume the way both the ATS and the human recruiter behind it would.'],
-  ['Does it work outside the GCC?', 'Yes. Choose your target job market (GCC, North America, Europe, or Global) before analysing, and the feedback adjusts to that market\'s conventions.'],
-  ['Is my CV data stored or shared?', 'Your CV text is only used to generate your report. It isn\'t sold, shared, or used to train external models.'],
-  ['What if I want a full rewrite, not just feedback?', 'That\'s exactly what ZAYT CV Services does — book a rewrite via WhatsApp and we\'ll take it from feedback to a finished, ATS-optimised CV.']
-];
-const faqList = document.getElementById('faqList');
-faqData.forEach(([q,a],i)=>{
-  const item = document.createElement('div');
-  item.className = 'faq-item';
-  item.innerHTML = `<button class="faq-q" onclick="toggleFaq(${i})">${q}<span class="plus">+</span></button><div class="faq-a" id="faqA${i}"><p>${a}</p></div>`;
-  faqList.appendChild(item);
-});
+// FAQ — rebuilt in the current language every time applyI18n() runs
+function rebuildFaq(){
+  const faqList = document.getElementById('faqList');
+  const faqData = t('faq_data');
+  faqList.innerHTML = '';
+  faqData.forEach(([q,a],i)=>{
+    const item = document.createElement('div');
+    item.className = 'faq-item';
+    item.innerHTML = `<button class="faq-q" onclick="toggleFaq(${i})">${q}<span class="plus">+</span></button><div class="faq-a" id="faqA${i}"><p>${a}</p></div>`;
+    faqList.appendChild(item);
+  });
+}
+rebuildFaq();
 function toggleFaq(i){
   const el = document.getElementById('faqA'+i);
   const item = el.parentElement;
