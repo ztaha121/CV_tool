@@ -98,7 +98,7 @@ export default async function handler(req, res) {
     // Only increments on the free/first scan of a report, not on the paid re-run,
     // so it reflects "resumes scanned" rather than API calls made.
     if (tier !== 'paid') {
-      fetch('https://api.countapi.xyz/hit/zayt-cv-checker/scans').catch(() => {});
+      fetch('https://countapi.mileshilliard.com/api/v1/hit/zayt_cv_checker_scans').catch(() => {});
     }
 
     res.status(200).json({ result, reportId });
