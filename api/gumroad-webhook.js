@@ -3,7 +3,7 @@ import { supabaseAdmin } from './_supabase-admin.js';
 // Two separate Gumroad products map to two separate credit types.
 // Set these to your real product permalinks (the part after /l/ in each URL).
 const REPORT_UNLOCK_PERMALINK = 'kdfaka'; // $4.99 — unlocks one partial report to full
-const SCAN_CREDIT_PERMALINK = 'YOUR-7-99-PRODUCT-PERMALINK'; // $7.99 — +1 scan, permanently
+const SCAN_CREDIT_PERMALINK = 'okbik'; // $7.99 — +1 scan, permanently
 
 // Set this URL as your Gumroad "Ping" webhook (Settings → Advanced → Ping, or
 // per-product under Settings). Gumroad POSTs form-encoded data on every sale,
