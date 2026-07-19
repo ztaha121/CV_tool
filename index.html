@@ -589,6 +589,19 @@ async function initAuth(){
   });
 }
 function isLoggedIn(){ return !!currentUser; }
+
+async function sendReportEmail(email, result){
+  try {
+    const res = await fetch('/api/send-report-email', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, result })
+    });
+    const data = await res.json();
+    if (!data.sent) console.warn('Report email not sent:', data.error);
+  } catch (e) {
+    console.warn('Report email request failed:', e.message);
+  }
+}
 function updateAuthUI(){
   const btn = document.getElementById('authBtn');
   const faceIdBtn = document.getElementById('addFaceIdBtn');
@@ -944,6 +957,7 @@ async function analyzeCV() {
       lastScanStatus = { unlocked: data.unlocked, scansUsed: data.scansUsed, scansRemaining: data.scansRemaining };
       renderResults(data.result, false, data.unlocked);
       updateScanBanner();
+      if (data.unlocked && currentUser && currentUser.email) sendReportEmail(currentUser.email, data.result);
     }
   } catch (e) {
     errDiv.textContent = 'Analysis failed — please try again or paste your CV text below.';
@@ -1152,10 +1166,13 @@ async function verifyLicense(){
     });
     const data = await res.json();
     if (data.unlocked) {
-      msg.textContent = 'Payment confirmed — full reports unlocked!'; msg.classList.add('ok');
+      msg.textContent = 'Payment confirmed — full reports unlocked! Emailing you a copy...'; msg.classList.add('ok');
       lastScanStatus = { unlocked: true, scansUsed: lastScanStatus ? lastScanStatus.scansUsed : 0, scansRemaining: null };
       updateScanBanner();
-      if (lastResult) renderResults(lastResult, false, true);
+      if (lastResult) {
+        renderResults(lastResult, false, true);
+        sendReportEmail(email, lastResult);
+      }
       setTimeout(closeUnlock, 900);
     } else {
       msg.textContent = "We don't see a payment from that email yet — it can take a minute after checkout, try again shortly.";
