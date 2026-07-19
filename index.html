@@ -868,10 +868,10 @@ const i18n = {
     footer_tagline: 'Bilingual CV writing and optimisation, ATS-checked and built for the role you actually want.',
     footer_contact: 'Contact', footer_copyright: '© 2026 ZAYT CV Services.', footer_slogan: "Let's rewrite your future.",
     sticky_text: 'Ready to check your CV?', sticky_arrow: '↑ Scan now',
-    banner_guest: 'Unlimited free scans as a guest (partial report). Log in for full premium reports — 3 free.',
-    banner_no_status: 'You have {n} free premium scans (full reports).',
-    banner_out: "You've used all {total} premium scans. Buy 1 more for $7.99.",
-    banner_left: '{left} of {total} premium scans left.',
+    banner_guest: 'Unlimited free scans as a guest (partial report). $4.99 unlocks any report in full.',
+    banner_no_status: 'You have {n} free scans (partial reports — $4.99 unlocks any one in full).',
+    banner_out: "You've used all {total} free scans. Buy 1 more for $7.99.",
+    banner_left: '{left} of {total} free scans left.',
     faq_data: [
       ['Is the CV analysis really free?', 'Yes — every CV gets a full score breakdown, one strength, and one fix at no cost. Unlocking the rest of the strengths, fixes, and quick wins is $4.99 per report.'],
       ['How is this different from other ATS checkers?', 'Most tools only give a keyword-match score. This one checks parse-ability, keyword match, achievement quality, and tone — reading your resume the way both the ATS and the human recruiter behind it would.'],
@@ -938,10 +938,10 @@ const i18n = {
     footer_tagline: 'كتابة وتحسين سير ذاتية بالعربي والإنجليزي، مفحوصة لأنظمة ATS ومبنية على الوظيفة اللي تبيها.',
     footer_contact: 'تواصل معنا', footer_copyright: '© 2026 خدمات ZAYT للسير الذاتية.', footer_slogan: 'خلّنا نعيد كتابة مستقبلك.',
     sticky_text: 'جاهز تفحص سيرتك؟', sticky_arrow: '↑ افحص الحين',
-    banner_guest: 'فحوصات مجانية بلا حدود كضيف (تقرير جزئي). سجّل دخول عشان تقارير مميزة كاملة — ٣ فحوصات مجانية.',
-    banner_no_status: 'عندك {n} فحوصات مميزة مجانية (تقارير كاملة).',
-    banner_out: 'خلّصت كل الـ {total} فحوصات المميزة. اشترِ وحدة زيادة بـ ٧.٩٩$.',
-    banner_left: 'باقي لك {left} من {total} فحوصات مميزة.',
+    banner_guest: 'فحوصات مجانية بلا حدود كضيف (تقرير جزئي). ٤.٩٩$ تفتح أي تقرير كامل.',
+    banner_no_status: 'عندك {n} فحوصات مجانية (تقارير جزئية — ٤.٩٩$ تفتح أي وحدة كاملة).',
+    banner_out: 'خلّصت كل الـ {total} فحوصات المجانية. اشترِ وحدة زيادة بـ ٧.٩٩$.',
+    banner_left: 'باقي لك {left} من {total} فحوصات مجانية.',
     faq_data: [
       ['هل فحص السيرة الذاتية مجاني فعلاً؟', 'إي والله — كل سيرة تاخذ تقييم كامل، نقطة قوة، وشي واحد تصلحه مجاناً. باقي نقاط القوة والإصلاحات وخطة العمل تفتحها بـ ٤.٩٩$ للتقرير.'],
       ['شنو الفرق بينه وبين فاحصات ATS الثانية؟', 'أغلب الأدوات تعطيك بس درجة تطابق كلمات. هذي الأداة تفحص قابلية القراءة، تطابق الكلمات، جودة الإنجازات، والأسلوب — تقرأ سيرتك زي ما يقرأها نظام التوظيف والمسؤول البشري وراه.'],
@@ -1143,11 +1143,10 @@ async function analyzeCV() {
       lastResult = data.result;
       currentReportId = data.reportId;
       if (data.mode === 'premium') {
-        lastScanStatus = { unlocked: true, scansUsed: data.scansUsed, scansRemaining: data.scansRemaining, totalAllowed: data.totalAllowed };
+        lastScanStatus = { unlocked: data.unlocked, scansUsed: data.scansUsed, scansRemaining: data.scansRemaining, totalAllowed: data.totalAllowed };
       }
       renderResults(data.result, false, data.unlocked);
       updateScanBanner();
-      if (data.mode === 'premium' && currentUser && currentUser.email) sendReportEmail(currentUser.email, data.result);
     }
   } catch (e) {
     errDiv.textContent = 'Analysis failed — please try again or paste your CV text below.';
