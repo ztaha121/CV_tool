@@ -458,7 +458,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
       <div class="footer-logo">ZAYT<span class="logo-dot">.</span></div>
       <p>Bilingual CV writing and optimisation, ATS-checked and built for the role you actually want.</p>
       <div class="social-links">
-        <a href="https://instagram.com/zayt.cvservices" target="_blank">Instagram</a>
+        <a href="https://www.instagram.com/zayt.cvservices/" target="_blank">Instagram</a>
         <a href="https://wa.me/966580437821" target="_blank">WhatsApp</a>
         <a href="mailto:zay.taha@gmail.com">Email</a>
       </div>
@@ -491,7 +491,7 @@ let unlocked = false;
 // Live counter — pulls the real count from the same counter analyze.js increments
 (function initCounter(){
   const el = document.getElementById('scanCount');
-  fetch('https://api.countapi.xyz/get/zayt-cv-checker/scans')
+  fetch('https://countapi.mileshilliard.com/api/v1/get/zayt_cv_checker_scans')
     .then(r => r.json())
     .then(data => {
       const target = data && typeof data.value === 'number' ? data.value : 0;
@@ -763,8 +763,7 @@ function renderResults(r, isUnlocked, isSample) {
             <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
           </div>`).join('')}</div>
         <div class="lock-overlay">
-          <div class="lock-count">+${locked.length} more rewrite${locked.length>1?'s':''}</div>
-          <button class="btn-unlock-small" onclick="openUnlock()">Unlock</button>
+          <button class="btn-unlock-small" onclick="openUnlock()">Unlock full report</button>
         </div>
       </div>` : '';
     return `<div class="rewrite-card fade-up">
