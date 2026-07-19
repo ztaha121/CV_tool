@@ -4,7 +4,7 @@ const reportCache = global.__cvReportCache || (global.__cvReportCache = new Map(
 
 import { supabaseAdmin } from './_supabase-admin.js';
 
-const FREE_SCAN_LIMIT = 3;
+const FREE_PREMIUM_SCANS = 3; // free Claude-powered scans for logged-in users
 
 async function getUserFromAuthHeader(req) {
   const authHeader = req.headers.authorization || '';
@@ -15,14 +15,17 @@ async function getUserFromAuthHeader(req) {
   return data.user;
 }
 
-async function hasUnlockedPurchase(email) {
-  if (!email) return false;
+async function getCredits(email) {
+  if (!email) return { reportUnlockCredits: 0, scanCredits: 0 };
   const { data } = await supabaseAdmin
     .from('unlocked_purchases')
-    .select('email')
+    .select('report_unlock_credits, scan_credits')
     .eq('email', email.toLowerCase().trim())
     .single();
-  return !!data;
+  return {
+    reportUnlockCredits: data ? data.report_unlock_credits : 0,
+    scanCredits: data ? data.scan_credits : 0
+  };
 }
 
 async function getScansUsed(userId) {
@@ -116,40 +119,50 @@ function extractJson(raw) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const user = await getUserFromAuthHeader(req);
-  if (!user) return res.status(401).json({ error: 'Please sign in to scan your resume.' });
-
   const { cvText, jobTitle, jobDesc, regionNote } = req.body;
   if (!cvText || cvText.length < 50) return res.status(400).json({ error: 'No CV text provided' });
 
-  try {
-    const unlocked = await hasUnlockedPurchase(user.email);
-    const scansUsed = await getScansUsed(user.id);
+  const user = await getUserFromAuthHeader(req);
 
-    if (!unlocked && scansUsed >= FREE_SCAN_LIMIT) {
-      return res.status(403).json({ error: 'paywall', scansUsed, unlocked: false });
+  try {
+    const prompt = buildPrompt({ cvText, jobTitle, jobDesc, regionNote: regionNote || 'general international best practice' });
+    const reportId = `rpt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
+    if (!user) {
+      // ── GUEST: unlimited free scans on Groq, always a partial report.
+      // Paying $4.99 (via /api/unlock-report) reveals this specific report in full.
+      const raw = await callGroq(prompt);
+      const result = extractJson(raw);
+      reportCache.set(reportId, { cvText, jobTitle, jobDesc, regionNote, createdAt: Date.now() });
+      return res.status(200).json({ result, reportId, mode: 'guest', unlocked: false });
     }
 
-    const prompt = buildPrompt({ cvText, jobTitle, jobDesc, regionNote: regionNote || 'general international best practice' });
-    // Paying/unlocked users get the more accurate model on every scan.
-    const raw = unlocked ? await callClaude(prompt) : await callGroq(prompt);
+    // ── LOGGED IN: premium (Claude) scans, 3 free, then $7.99 per +1 scan credit.
+    const { scanCredits } = await getCredits(user.email);
+    const scansUsed = await getScansUsed(user.id);
+    const totalAllowed = FREE_PREMIUM_SCANS + scanCredits;
+
+    if (scansUsed >= totalAllowed) {
+      return res.status(403).json({ error: 'paywall_scan_credit', scansUsed, totalAllowed });
+    }
+
+    const raw = await callClaude(prompt);
     const result = extractJson(raw);
-
-    if (!unlocked) await incrementScansUsed(user.id, scansUsed);
-
-    const reportId = `rpt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    await incrementScansUsed(user.id, scansUsed);
     reportCache.set(reportId, { cvText, jobTitle, jobDesc, regionNote, createdAt: Date.now() });
 
     res.status(200).json({
       result,
       reportId,
-      unlocked,
-      scansUsed: unlocked ? scansUsed : scansUsed + 1,
-      scansRemaining: unlocked ? null : Math.max(0, FREE_SCAN_LIMIT - (scansUsed + 1))
+      mode: 'premium',
+      unlocked: true, // premium scans are always full reports
+      scansUsed: scansUsed + 1,
+      totalAllowed,
+      scansRemaining: Math.max(0, totalAllowed - (scansUsed + 1))
     });
   } catch (err) {
     res.status(500).json({ error: 'Analysis failed', details: err.message });
   }
 }
 
-export { reportCache, buildPrompt, callClaude, extractJson };
+export { reportCache, buildPrompt, callClaude };
