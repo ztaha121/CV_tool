@@ -476,16 +476,16 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   <div class="modal">
     <button class="modal-close" onclick="closeUnlock()">✕</button>
     <h2>You've used your 3 free scans</h2>
-    <p style="font-size:13.5px;color:var(--muted)">Subscribe for unlimited ATS scans, every month.</p>
-    <div class="price" id="modalPrice">$4.99 <span>per month, unlimited scans</span></div>
+    <p style="font-size:13.5px;color:var(--muted)">Pay once, scan unlimited resumes forever — no subscription, no recurring charge.</p>
+    <div class="price" id="modalPrice">$4.99 <span>one-time, unlimited scans forever</span></div>
     <ul>
       <li>Unlimited resume scans, any time</li>
       <li>Full report every time — no limits</li>
-      <li>Cancel any time</li>
+      <li>Pay once — never billed again</li>
     </ul>
-    <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/cvhealthcheck" target="_blank">Subscribe now →</a>
+    <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/cvhealthcheck" target="_blank">Unlock for $4.99 →</a>
     <div class="license-row">
-      <input type="text" id="licenseInput" placeholder="Already subscribed? Paste license key">
+      <input type="text" id="licenseInput" placeholder="Already purchased? Paste license key">
       <button onclick="verifyLicense()">Apply</button>
     </div>
     <div class="license-msg" id="licenseMsg"></div>
@@ -886,7 +886,7 @@ async function analyzeCV() {
     errDiv.style.display = 'block'; return;
   }
 
-  if (!isSubscribed() && scansRemaining() <= 0) {
+  if (!isUnlockedForever() && scansRemaining() <= 0) {
     openUnlock();
     return;
   }
@@ -910,13 +910,13 @@ async function analyzeCV() {
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), region: meta.region, regionNote: meta.note, tier: (isSubscribed() || isLoggedIn()) ? 'paid' : 'free' })
+      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), region: meta.region, regionNote: meta.note, tier: (isUnlockedForever() || isLoggedIn()) ? 'paid' : 'free' })
     });
     const data = await response.json();
     if (data.error) throw new Error(data.error);
     lastResult = data.result;
     currentReportId = data.reportId;
-    if (!isSubscribed()) incScansUsed();
+    if (!isUnlockedForever()) incScansUsed();
     renderResults(data.result);
     updateScanBanner();
   } catch (e) {
@@ -1019,21 +1019,21 @@ function renderResults(r, isSample) {
 const FREE_SCAN_LIMIT = 3;
 function getScansUsed(){ return parseInt(localStorage.getItem('zayt_scans_used') || '0', 10); }
 function incScansUsed(){ localStorage.setItem('zayt_scans_used', getScansUsed() + 1); }
-function isSubscribed(){ return localStorage.getItem('zayt_subscribed') === 'true'; }
+function isUnlockedForever(){ return localStorage.getItem('zayt_lifetime_unlock') === 'true'; }
 function scansRemaining(){ return Math.max(0, FREE_SCAN_LIMIT - getScansUsed()); }
 
 function updateScanBanner(){
   const el = document.getElementById('scanBanner');
   if (!el) return;
   const modelNote = isLoggedIn() ? ' (premium model active)' : '';
-  if (isSubscribed()) {
-    el.textContent = `Unlimited scans active — thanks for subscribing.${modelNote}`;
+  if (isUnlockedForever()) {
+    el.textContent = `Unlimited scans unlocked — thanks for your support.${modelNote}`;
     el.className = 'scan-banner';
     return;
   }
   const left = scansRemaining();
   if (left <= 0) {
-    el.textContent = "You've used your 3 free scans. Subscribe for unlimited access.";
+    el.textContent = "You've used your 3 free scans. Unlock unlimited access for $4.99, one-time.";
     el.className = 'scan-banner out';
   } else {
     el.textContent = `${left} of 3 free scans left${modelNote}`;
@@ -1059,7 +1059,7 @@ updateScanBanner();
 function openUnlock(){
   const priceEl = document.getElementById('modalPrice');
   const price = formatPrice(4.99);
-  priceEl.innerHTML = `${price} <span>per month, unlimited scans</span>`;
+  priceEl.innerHTML = `${price} <span>one-time, unlimited scans forever</span>`;
   document.getElementById('unlockModal').classList.add('show');
 }
 function closeUnlock(){ document.getElementById('unlockModal').classList.remove('show'); }
@@ -1078,7 +1078,7 @@ async function verifyLicense(){
     const data = await res.json();
     if (data.valid) {
       msg.textContent = 'Subscription active — unlimited scans unlocked!'; msg.classList.add('ok');
-      localStorage.setItem('zayt_subscribed', 'true');
+      localStorage.setItem('zayt_lifetime_unlock', 'true');
       setTimeout(closeUnlock, 900);
     } else {
       msg.textContent = data.error || 'That key didn\'t work — check and try again.';
