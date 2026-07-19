@@ -7,7 +7,14 @@ function buildPrompt({ cvText, jobTitle, jobDesc, regionNote }) {
   const jdBlock = jobDesc
     ? `\nJOB DESCRIPTION TO MATCH AGAINST:\n${jobDesc}\n\nAlso compute a "keywordMatch" score (0-100): the percentage of important hard skills, tools, and qualifications from the job description that genuinely appear (or are clearly implied) in the CV. Be strict — don't count a keyword as matched just because a loosely related word appears.`
     : `\nNo job description was provided, so omit "keywordMatch" entirely from the JSON (don't include the key).`;
-  return `You are a senior CV consultant and ATS (Applicant Tracking System) specialist. Evaluate this CV as an ATS would first, then as a recruiter, against ${regionNote}
+  return `You are an industrial-grade ATS (Applicant Tracking System) simulator and senior CV consultant, evaluating with the rigor of real enterprise ATS platforms (Workday, Taleo, Greenhouse). Evaluate this CV against ${regionNote}
+
+RUN THIS AS A FULL TECHNICAL + CONTENT AUDIT, not a surface read:
+1. Parse simulation: check for standard section headers (Experience, Education, Skills), whether contact info is machine-extractable, whether tables/columns/text-boxes/graphics would break parsing, date format consistency, and file structure.
+2. Keyword and skill density relative to the candidate's apparent target role.
+3. Achievement specificity — quantified impact vs vague duty statements.
+4. Tone, grammar, and consistency of voice.
+5. Structural flow — logical section order, length appropriate to seniority.
 
 EXAMPLES OF WEAK VS STRONG BULLETS (use this calibration when scoring "impact" and "achievementRatio"):
 - Weak: "Responsible for handling customer complaints."
@@ -15,14 +22,14 @@ EXAMPLES OF WEAK VS STRONG BULLETS (use this calibration when scoring "impact" a
 - Weak: "Worked on marketing campaigns for the company."
   Strong: "Led 3 social media campaigns that grew Instagram following by 40% and drove a 15% increase in inbound leads."
 
-The "ats" score should reflect parse-ability: standard section headers, no tables/columns/graphics that break parsing, consistent date formats, and a machine-readable structure — not general quality.
+The "ats" score should reflect parse-ability specifically (section headers, no tables/columns/graphics, consistent date formats, machine-readable structure) — not general quality.
 ${jdBlock}
 
 INSTRUCTIONS:
-First, briefly reason through the CV's strengths and weaknesses in plain text (2-4 short sentences, not a list) — consider achievement specificity, ATS-friendliness, tone, and market fit given the calibration above.
+First, briefly reason through the CV's strengths and weaknesses in plain text (2-4 short sentences, not a list) — consider achievement specificity, ATS parse-ability, tone, and market fit given the calibration above.
 
 Then, on a new line, output ONLY a valid JSON object with this exact structure (no markdown, no code fences, nothing after it):
-{"overall":<0-100>,"verdict":"strong"|"good"|"weak","verdictText":"<one punchy sentence>","scores":{"impact":<0-100>,"ats":<0-100>,"tone":<0-100>,"regionFit":<0-100>,"achievementRatio":<0-100>,"structure":<0-100>}${jobDesc ? ',"keywordMatch":<0-100>' : ''},"wins":["<4 strengths, specific to this CV, not generic>"],"fixes":["<4 problems, specific to this CV, not generic>"],"quickWins":["<3 concrete actionable fixes the person can do today>"]}
+{"overall":<0-100>,"verdict":"strong"|"good"|"weak","verdictText":"<one punchy sentence>","scores":{"impact":<0-100>,"ats":<0-100>,"tone":<0-100>,"regionFit":<0-100>,"achievementRatio":<0-100>,"structure":<0-100>}${jobDesc ? ',"keywordMatch":<0-100>' : ''},"wins":["<exactly 3 real strengths, specific to this CV, not generic>"],"weaknesses":["<exactly 3 real weaknesses/gaps holding this CV back, specific and diagnostic>"],"fixes":["<exactly 3 concrete prescriptive changes to make, specific to this CV>"],"atsIssues":["<exactly 3 technical parse-level flags: formatting, headers, structure — specific to this CV, or state clearly if none found>"],"quickWins":["<3 concrete step-by-step actions the person can do today, ranked by impact>"],"rewrittenExample":{"before":"<one weak bullet copied/adapted from this CV>","after":"<the same bullet rewritten strong, with a real plausible number>"}}
 
 ${jobContext}
 CV TEXT:
