@@ -334,7 +334,6 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
       <div class="app-icon">🔍</div>
       <h1 id="heroH1">Same resume.<br><span>Different reader.</span></h1>
       <p data-i18n="sub">Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.</p>
-      <div class="pill-badge">✨ <span data-i18n="eyebrow">no fabricated metrics, ever</span></div>
 
       <div class="trust-row">
         <span><b>6</b> <span data-i18n="trust1">scoring dimensions</span></span>
@@ -472,24 +471,46 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 </section>
 
 <!-- Unlock modal -->
+<!-- Report unlock modal — $4.99, reveals one specific partial (guest) report in full -->
 <div class="modal-backdrop" id="unlockModal">
   <div class="modal">
     <button class="modal-close" onclick="closeUnlock()">✕</button>
     <h2>Unlock your full report</h2>
-    <p style="font-size:13.5px;color:var(--muted)">See every strength, every fix, your full action plan, and all rewrite examples — pay once, no subscription.</p>
-    <div class="price" id="modalPrice">$4.99 <span>one-time, unlocks every report you scan</span></div>
+    <p style="font-size:13.5px;color:var(--muted)">See every strength, every fix, your full action plan, and all rewrite examples for this scan.</p>
+    <div class="price" id="modalPrice">$4.99 <span>one-time, unlocks this report</span></div>
     <ul>
-      <li>Full report, every scan, no limits</li>
+      <li>Full report for this scan</li>
       <li>Your complete action plan</li>
       <li>Pay once — never billed again</li>
     </ul>
     <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/kdfaka" target="_blank">Unlock for $4.99 →</a>
     <div class="license-row">
       <input type="email" id="licenseInput" placeholder="Email you paid with">
-      <button onclick="verifyLicense()">Check</button>
+      <button onclick="verifyReportUnlock()">Check</button>
     </div>
     <div class="license-msg" id="licenseMsg"></div>
     <div class="modal-note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. After paying, come back and check with the same email you used at checkout.</div>
+  </div>
+</div>
+
+<!-- Scan credit modal — $7.99, adds exactly 1 more premium (logged-in) scan -->
+<div class="modal-backdrop" id="scanCreditModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeScanCreditModal()">✕</button>
+    <h2>You've used your 3 free premium scans</h2>
+    <p style="font-size:13.5px;color:var(--muted)">Buy 1 more premium scan (powered by our most accurate model) — no subscription, just this one scan.</p>
+    <div class="price" id="scanCreditPrice">$7.99 <span>one-time, adds 1 more scan</span></div>
+    <ul>
+      <li>1 additional premium scan, full report</li>
+      <li>Uses our more accurate model</li>
+      <li>Buy more any time, one at a time</li>
+    </ul>
+    <a class="btn-gumroad" id="scanCreditGumroadLink" href="https://zaytaha.gumroad.com/l/okbik" target="_blank">Buy 1 scan for $7.99 →</a>
+    <div class="license-row">
+      <button onclick="refreshScanStatus()" style="width:100%">I've paid — check now</button>
+    </div>
+    <div class="license-msg" id="scanCreditMsg"></div>
+    <div class="modal-note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. Checking usually works within a minute of payment.</div>
   </div>
 </div>
 
@@ -623,6 +644,8 @@ function updateAuthUI(){
 // user — needed because a page refresh loses any in-memory state from a scan.
 async function refreshScanStatus(){
   if (!supabaseClient) return;
+  const msg = document.getElementById('scanCreditMsg');
+  if (msg) { msg.style.display = 'block'; msg.className = 'license-msg'; msg.textContent = 'Checking...'; }
   try {
     const { data: sess } = await supabaseClient.auth.getSession();
     const token = sess.session ? sess.session.access_token : null;
@@ -630,8 +653,18 @@ async function refreshScanStatus(){
     const res = await fetch('/api/scan-status', { headers: { 'Authorization': `Bearer ${token}` } });
     const data = await res.json();
     if (!data.error) {
+      const hadCreditBefore = lastScanStatus ? lastScanStatus.totalAllowed : FREE_PREMIUM_SCANS;
       lastScanStatus = data;
       updateScanBanner();
+      if (msg) {
+        if (data.totalAllowed > hadCreditBefore || data.scansRemaining > 0) {
+          msg.textContent = 'Credit confirmed — you can scan again now!'; msg.classList.add('ok');
+          setTimeout(closeScanCreditModal, 900);
+        } else {
+          msg.textContent = "We don't see a new payment yet — it can take a minute, try again shortly.";
+          msg.classList.add('err');
+        }
+      }
     }
   } catch {}
 }
@@ -918,11 +951,6 @@ async function analyzeCV() {
     errDiv.style.display = 'block'; return;
   }
 
-  if (!isLoggedIn()) {
-    openAuth();
-    return;
-  }
-
   btn.classList.add('loading');
   const progressTrack = document.getElementById('progressTrack');
   const progressFill = document.getElementById('progressFill');
@@ -939,25 +967,37 @@ async function analyzeCV() {
   }, 1100);
 
   try {
-    const { data: sess } = await supabaseClient.auth.getSession();
-    const token = sess.session ? sess.session.access_token : null;
+    // Only attach an auth token if the person is actually logged in — guests
+    // scan without one and get unlimited free (Groq) scans server-side.
+    let token = null;
+    if (isLoggedIn() && supabaseClient) {
+      const { data: sess } = await supabaseClient.auth.getSession();
+      token = sess.session ? sess.session.access_token : null;
+    }
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const response = await fetch('/api/analyze', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      headers,
       body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), regionNote: meta.note })
     });
     const data = await response.json();
-    if (data.error === 'paywall') {
-      openUnlock();
+    if (data.error === 'paywall_scan_credit') {
+      lastScanStatus = { unlocked: false, scansUsed: data.scansUsed, scansRemaining: 0, totalAllowed: data.totalAllowed };
+      updateScanBanner();
+      openScanCreditModal();
     } else if (data.error) {
       throw new Error(data.error);
     } else {
       lastResult = data.result;
       currentReportId = data.reportId;
-      lastScanStatus = { unlocked: data.unlocked, scansUsed: data.scansUsed, scansRemaining: data.scansRemaining };
+      if (data.mode === 'premium') {
+        lastScanStatus = { unlocked: true, scansUsed: data.scansUsed, scansRemaining: data.scansRemaining, totalAllowed: data.totalAllowed };
+      }
       renderResults(data.result, false, data.unlocked);
       updateScanBanner();
-      if (data.unlocked && currentUser && currentUser.email) sendReportEmail(currentUser.email, data.result);
+      if (data.mode === 'premium' && currentUser && currentUser.email) sendReportEmail(currentUser.email, data.result);
     }
   } catch (e) {
     errDiv.textContent = 'Analysis failed — please try again or paste your CV text below.';
@@ -1095,34 +1135,30 @@ function renderResults(r, isSample, isUnlocked) {
   setTimeout(() => document.querySelectorAll('.bar-fill[data-width]').forEach(b => b.style.width = b.dataset.width+'%'), 150);
 }
 
-// ── Usage-based paywall: 3 free scans (server-tracked per account), then $4.99 one-time to unlock ──
-const FREE_SCAN_LIMIT = 3;
-let lastScanStatus = null; // { unlocked, scansUsed, scansRemaining } — set from the server's response after each scan
+// ── Guests: unlimited free (Groq) scans, always partial — $4.99 unlocks one report.
+// ── Logged-in: 3 free premium (Claude) scans, always full — $7.99 buys +1 more.
+const FREE_PREMIUM_SCANS = 3;
+let lastScanStatus = null; // { unlocked, scansUsed, scansRemaining, totalAllowed } — premium users only
 
 function updateScanBanner(){
   const el = document.getElementById('scanBanner');
   if (!el) return;
   if (!isLoggedIn()) {
-    el.textContent = 'Log in to scan your resume (3 free scans per person).';
-    el.className = 'scan-banner';
-    return;
-  }
-  if (lastScanStatus && lastScanStatus.unlocked) {
-    el.textContent = 'Full reports unlocked on every scan — thanks for your support.';
+    el.textContent = 'Unlimited free scans as a guest (partial report). Log in for full premium reports — 3 free.';
     el.className = 'scan-banner';
     return;
   }
   if (!lastScanStatus) {
-    el.textContent = `${FREE_SCAN_LIMIT} free scans per person — each shows a partial report. Unlock the full report any time for $4.99.`;
+    el.textContent = `You have ${FREE_PREMIUM_SCANS} free premium scans (full reports).`;
     el.className = 'scan-banner';
     return;
   }
   const left = lastScanStatus.scansRemaining;
   if (left <= 0) {
-    el.textContent = "You've used all 3 free scans for this account. Unlock full reports for $4.99 to keep scanning.";
+    el.textContent = `You've used all ${lastScanStatus.totalAllowed} premium scans. Buy 1 more for $7.99.`;
     el.className = 'scan-banner out';
   } else {
-    el.textContent = `${left} of ${FREE_SCAN_LIMIT} free scans left — each shows a partial report. Unlock the full report any time for $4.99.`;
+    el.textContent = `${left} of ${lastScanStatus.totalAllowed} premium scans left.`;
     el.className = left === 1 ? 'scan-banner low' : 'scan-banner';
   }
 }
@@ -1145,7 +1181,7 @@ updateScanBanner();
 function openUnlock(){
   const priceEl = document.getElementById('modalPrice');
   const price = formatPrice(4.99);
-  priceEl.innerHTML = `${price} <span>one-time, full reports forever</span>`;
+  priceEl.innerHTML = `${price} <span>one-time, unlocks this report</span>`;
   if (isLoggedIn() && currentUser.email) {
     document.getElementById('licenseInput').value = currentUser.email;
   }
@@ -1153,35 +1189,41 @@ function openUnlock(){
 }
 function closeUnlock(){ document.getElementById('unlockModal').classList.remove('show'); }
 
-async function verifyLicense(){
+async function verifyReportUnlock(){
   const email = document.getElementById('licenseInput').value.trim();
   const msg = document.getElementById('licenseMsg');
   msg.className = 'license-msg'; msg.style.display='block';
   if (!email) { msg.textContent = 'Enter the email you paid with.'; msg.classList.add('err'); return; }
+  if (!currentReportId) { msg.textContent = 'Run a scan first, then come back to unlock it.'; msg.classList.add('err'); return; }
   msg.textContent = 'Checking...'; msg.classList.remove('err','ok');
   try {
-    const res = await fetch('/api/check-unlock', {
+    const res = await fetch('/api/unlock-report', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email, reportId: currentReportId })
     });
     const data = await res.json();
     if (data.unlocked) {
-      msg.textContent = 'Payment confirmed — full reports unlocked! Emailing you a copy...'; msg.classList.add('ok');
-      lastScanStatus = { unlocked: true, scansUsed: lastScanStatus ? lastScanStatus.scansUsed : 0, scansRemaining: null };
-      updateScanBanner();
-      if (lastResult) {
-        renderResults(lastResult, false, true);
-        sendReportEmail(email, lastResult);
-      }
+      msg.textContent = 'Payment confirmed — full report unlocked! Emailing you a copy...'; msg.classList.add('ok');
+      lastResult = data.result;
+      renderResults(lastResult, false, true);
+      sendReportEmail(email, lastResult);
       setTimeout(closeUnlock, 900);
     } else {
-      msg.textContent = "We don't see a payment from that email yet — it can take a minute after checkout, try again shortly.";
+      msg.textContent = data.error || "We don't see a payment from that email yet — it can take a minute after checkout, try again shortly.";
       msg.classList.add('err');
     }
   } catch {
     msg.textContent = 'Something went wrong — try again.'; msg.classList.add('err');
   }
 }
+
+function openScanCreditModal(){
+  const priceEl = document.getElementById('scanCreditPrice');
+  const price = formatPrice(7.99);
+  priceEl.innerHTML = `${price} <span>one-time, adds 1 more scan</span>`;
+  document.getElementById('scanCreditModal').classList.add('show');
+}
+function closeScanCreditModal(){ document.getElementById('scanCreditModal').classList.remove('show'); }
 
 // FAQ
 const faqData = [
