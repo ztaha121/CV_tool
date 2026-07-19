@@ -523,6 +523,16 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   </div>
 </div>
 
+<!-- One-time biometric setup prompt, shown right after first login only -->
+<div class="modal-backdrop" id="faceIdPrompt">
+  <div class="modal">
+    <h2>Set up faster sign-in?</h2>
+    <p style="font-size:13.5px;color:var(--muted)">Use your fingerprint or face unlock to log in next time — no password needed.</p>
+    <button class="btn-gumroad" onclick="acceptFaceIdPrompt()" style="margin-top:18px">Set it up →</button>
+    <button class="btn-google" onclick="dismissFaceIdPrompt()" style="margin-top:10px">No thanks</button>
+  </div>
+</div>
+
 <footer>
   <div class="footer-inner">
     <div class="footer-col">
@@ -572,9 +582,10 @@ async function initAuth(){
   const { data } = await supabaseClient.auth.getSession();
   currentUser = data.session ? data.session.user : null;
   updateAuthUI();
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
+  supabaseClient.auth.onAuthStateChange((event, session) => {
     currentUser = session ? session.user : null;
     updateAuthUI();
+    if (event === 'SIGNED_IN') maybeShowFaceIdPrompt();
   });
 }
 function isLoggedIn(){ return !!currentUser; }
@@ -591,6 +602,24 @@ function updateAuthUI(){
     faceIdBtn.style.display = 'none';
   }
   updateScanBanner();
+}
+
+// Ask once, ever, whether they want biometric login — never nags again either way.
+async function maybeShowFaceIdPrompt(){
+  if (localStorage.getItem('zayt_faceid_prompted') === 'true') return;
+  if (!window.PublicKeyCredential || !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) return;
+  const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(() => false);
+  if (!available) return; // this device has no fingerprint/face unlock hardware — don't ask
+  document.getElementById('faceIdPrompt').classList.add('show');
+}
+function dismissFaceIdPrompt(){
+  localStorage.setItem('zayt_faceid_prompted', 'true');
+  document.getElementById('faceIdPrompt').classList.remove('show');
+}
+async function acceptFaceIdPrompt(){
+  localStorage.setItem('zayt_faceid_prompted', 'true');
+  document.getElementById('faceIdPrompt').classList.remove('show');
+  await handleRegisterFaceId();
 }
 async function handleGoogleAuth(){
   if (!supabaseClient) { alert('Sign-in isn\'t configured yet — check back soon.'); return; }
