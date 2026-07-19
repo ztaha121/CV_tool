@@ -1269,13 +1269,13 @@ function renderResults(r, isSample, isUnlocked) {
       <div class="verdict ${r.verdict}">${r.verdictText}</div>
     </div>
     <div class="feedback-grid three-col fade-up" style="animation-delay:.05s">
-      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>${t('results_working')}</h3>${lockedList(r.wins, isUnlocked, 2, 'strengths')}</div>
-      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>${t('results_weak')}</h3>${lockedList(r.weaknesses, isUnlocked, 2, 'weaknesses')}</div>
-      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>${t('results_fixes')}</h3>${lockedList(r.fixes, isUnlocked, 2, 'fixes')}</div>
+      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>${t('results_working')}</h3>${lockedList(r.wins, isUnlocked, 1, 'strengths')}</div>
+      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>${t('results_weak')}</h3>${lockedList(r.weaknesses, isUnlocked, 1, 'weaknesses')}</div>
+      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>${t('results_fixes')}</h3>${lockedList(r.fixes, isUnlocked, 1, 'fixes')}</div>
     </div>
     <div class="feedback-card ats-flags fade-up" style="margin-bottom:20px;animation-delay:.1s">
       <h3><span class="tag-icon" style="background:var(--ink)">⚙</span>${t('results_ats_flags')}</h3>
-      ${lockedList(r.atsIssues, isUnlocked, 2, 'flags')}
+      ${lockedList(r.atsIssues, isUnlocked, 1, 'flags')}
     </div>
     <div class="quick-wins fade-up" style="animation-delay:.15s">
       <h3>${t('results_action_plan')}</h3>
