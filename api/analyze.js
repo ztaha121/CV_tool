@@ -141,7 +141,9 @@ export default async function handler(req, res) {
       return res.status(200).json({ result, reportId, mode: 'guest', unlocked: false });
     }
 
-    // ── LOGGED IN: premium (Claude) scans, 3 free, then $7.99 per +1 scan credit.
+    // ── LOGGED IN: better model (Claude), 3 free scans, then $7.99 per +1 scan credit.
+    // Reports are partial by default just like guests — $4.99 (via /api/unlock-report)
+    // unlocks any specific one in full, regardless of login state.
     const { scanCredits } = await getCredits(user.email);
     const scansUsed = await getScansUsed(user.id);
     const totalAllowed = FREE_PREMIUM_SCANS + scanCredits;
@@ -159,7 +161,7 @@ export default async function handler(req, res) {
       result,
       reportId,
       mode: 'premium',
-      unlocked: true, // premium scans are always full reports
+      unlocked: false, // partial report — pay $4.99 via /api/unlock-report to unlock this one
       scansUsed: scansUsed + 1,
       totalAllowed,
       scansRemaining: Math.max(0, totalAllowed - (scansUsed + 1))
