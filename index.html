@@ -118,15 +118,25 @@ input[type=file]{display:none}
 .verdict.weak{background:#F7E8E2;color:var(--red)}
 
 .feedback-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.feedback-grid.three-col{grid-template-columns:repeat(3,1fr)}
 .feedback-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:26px;box-shadow:0 6px 30px rgba(63,90,44,.05)}
 .feedback-card h3{font-size:14.5px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .feedback-card.wins h3{color:var(--matcha-dark)}
 .feedback-card.fixes h3{color:var(--red)}
+.feedback-card.weak h3{color:var(--amber)}
+.feedback-card.ats-flags h3{color:var(--ink)}
 .tag-icon{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0}
 .feedback-card.wins .tag-icon{background:var(--matcha)}
 .feedback-card.fixes .tag-icon{background:var(--red)}
+.feedback-card.weak .tag-icon{background:var(--amber)}
 .feedback-card ul{list-style:none;display:flex;flex-direction:column;gap:12px}
 .feedback-card li{font-size:13.5px;padding-left:0;color:var(--ink)}
+
+.rewrite-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 30px rgba(63,90,44,.05)}
+.rewrite-row{font-size:13.5px;padding:12px 14px;border-radius:10px;position:relative;padding-left:70px}
+.rewrite-row.before{background:#F7E8E2;color:#7A3C28}
+.rewrite-row.after{background:var(--sage-pale);color:var(--matcha-deep)}
+.rewrite-tag{position:absolute;left:14px;top:12px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;opacity:.7}
 
 .locked-item{position:relative;filter:blur(5px);user-select:none;pointer-events:none;opacity:.55}
 .lock-wrap{position:relative}
@@ -203,6 +213,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   .features{grid-template-columns:repeat(2,1fr)}
   .score-grid{grid-template-columns:1fr}
   .feedback-grid{grid-template-columns:1fr}
+  .feedback-grid.three-col{grid-template-columns:1fr}
   .cta-strip{flex-direction:column;align-items:flex-start}
   footer{padding:40px 20px 24px}
   .footer-bottom{flex-direction:column}
@@ -260,12 +271,20 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
           <input type="text" id="jobTitle" placeholder="e.g. Data Analyst">
         </div>
         <div class="field">
-          <label>Job market</label>
-          <select id="region">
-            <option value="gcc">GCC / Middle East</option>
-            <option value="na">North America</option>
-            <option value="eu">Europe</option>
-            <option value="other">Global / Other</option>
+          <label>Country</label>
+          <select id="country">
+            <option value="SA">Saudi Arabia</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="QA">Qatar</option>
+            <option value="KW">Kuwait</option>
+            <option value="BH">Bahrain</option>
+            <option value="OM">Oman</option>
+            <option value="MA">Morocco</option>
+            <option value="EG">Egypt</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="OTHER">Global / Other</option>
           </select>
         </div>
       </div>
@@ -306,19 +325,19 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
     <button class="modal-close" onclick="closeUnlock()">✕</button>
     <h2>Unlock your full report</h2>
     <p style="font-size:13.5px;color:var(--muted)">See every strength, every fix, and all 3 quick wins for this CV.</p>
-    <div class="price">$4.99 <span>one-time, this report only</span></div>
+    <div class="price" id="modalPrice">$4.99 <span>one-time, this report only</span></div>
     <ul>
-      <li>All strengths & fixes, fully unblurred</li>
-      <li>3 same-day quick wins</li>
-      <li>Personalised to your target role & market</li>
+      <li>Your full step-by-step action plan</li>
+      <li>3 same-day quick wins, ranked by impact</li>
+      <li>Rewritten example bullets for your target role</li>
     </ul>
-    <a class="btn-gumroad" href="https://zaytaha.gumroad.com/l/cvhealthcheck" target="_blank">Unlock for $4.99 →</a>
+    <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/cvhealthcheck" target="_blank">Unlock now →</a>
     <div class="license-row">
       <input type="text" id="licenseInput" placeholder="Already purchased? Paste license key">
       <button onclick="verifyLicense()">Apply</button>
     </div>
     <div class="license-msg" id="licenseMsg"></div>
-    <div class="modal-note">Your license key arrives by email right after checkout.</div>
+    <div class="modal-note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. Your license key arrives by email right after checkout.</div>
   </div>
 </div>
 
@@ -414,18 +433,34 @@ function removeFile() {
   document.getElementById('pdfInput').value = '';
 }
 
-const regionLabels = {
-  gcc: 'GCC and Middle East market conventions (Arabic/English bilingual value, visa/sponsorship visibility where relevant, certifications prominence).',
-  na: 'North American market conventions (no photo/DOB, concise 1-page early-career norm, quantified impact bullets).',
-  eu: 'European market conventions (varies by country, but generally no photo required in UK/Ireland/Nordics, CEFR-style language levels valued).',
-  other: 'general international best practice, since no specific regional market was selected.'
+const countryMeta = {
+  SA: { region:'gcc', note:'the Saudi Arabian job market (Arabic/English bilingual value, visa/sponsorship visibility where relevant, certifications prominence, GCC-style formatting).', currency:'SAR', rate:3.75 },
+  AE: { region:'gcc', note:'the UAE job market (bilingual value, visa status visibility where relevant, GCC-style formatting).', currency:'AED', rate:3.67 },
+  QA: { region:'gcc', note:'the Qatari job market (GCC-style formatting, certifications and sponsorship visibility).', currency:'QAR', rate:3.64 },
+  KW: { region:'gcc', note:'the Kuwaiti job market (GCC-style formatting, certifications and sponsorship visibility).', currency:'KWD', rate:0.307 },
+  BH: { region:'gcc', note:'the Bahraini job market (GCC-style formatting, certifications and sponsorship visibility).', currency:'BHD', rate:0.376 },
+  OM: { region:'gcc', note:'the Omani job market (GCC-style formatting, certifications and sponsorship visibility).', currency:'OMR', rate:0.384 },
+  MA: { region:'mena', note:'the Moroccan job market (French/Arabic/English trilingual value where relevant, EU-adjacent CV conventions, no photo required for most corporate roles).', currency:'MAD', rate:9.9 },
+  EG: { region:'mena', note:'the Egyptian job market (bilingual Arabic/English value, concise achievement-focused formatting).', currency:'EGP', rate:49 },
+  US: { region:'na', note:'the North American job market (no photo/DOB, concise 1-page early-career norm, quantified impact bullets).', currency:'USD', rate:1 },
+  CA: { region:'na', note:'the North American job market (no photo/DOB, concise 1-page early-career norm, quantified impact bullets).', currency:'USD', rate:1 },
+  GB: { region:'eu', note:'the UK/European job market (no photo required, CEFR-style language levels valued where relevant).', currency:'USD', rate:1 },
+  OTHER: { region:'other', note:'general international best practice, since no specific country was selected.', currency:'USD', rate:1 }
 };
+function getCountryMeta(){ return countryMeta[document.getElementById('country').value] || countryMeta.OTHER; }
+function formatPrice(usd){
+  const m = getCountryMeta();
+  const amount = usd * m.rate;
+  const decimals = m.rate < 1 ? 2 : 0;
+  return `${amount.toFixed(decimals)} ${m.currency}`;
+}
 
 async function analyzeCV() {
   const cvText = extractedText || document.getElementById('cvText').value.trim();
   const jobTitle = document.getElementById('jobTitle').value.trim();
   const jobDesc = document.getElementById('jobDesc').value.trim();
-  const region = document.getElementById('region').value;
+  const country = document.getElementById('country').value;
+  const meta = getCountryMeta();
   const btn = document.getElementById('analyzeBtn');
   const errDiv = document.getElementById('errorMsg');
   errDiv.style.display = 'none';
@@ -441,7 +476,7 @@ async function analyzeCV() {
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), region, regionNote: regionLabels[region], tier: 'free' })
+      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), region: meta.region, regionNote: meta.note, tier: 'free' })
     });
     const data = await response.json();
     if (data.error) throw new Error(data.error);
@@ -477,48 +512,40 @@ function renderResults(r, isUnlocked) {
     return `<div class="score-item"><div class="score-item-header"><span>${label}</span><span class="score-item-val">${v}</span></div><div class="bar-track"><div class="bar-fill ${getBarClass(v)}" data-width="${v}" style="width:0%"></div></div></div>`;
   }).join('');
 
-  const winsShown = isUnlocked ? r.wins : r.wins.slice(0,1);
-  const winsLocked = isUnlocked ? [] : r.wins.slice(1);
-  const fixesShown = isUnlocked ? r.fixes : r.fixes.slice(0,1);
-  const fixesLocked = isUnlocked ? [] : r.fixes.slice(1);
-
-  const winsLockedHtml = winsLocked.length ? `
-    <div class="lock-wrap">
-      <ul class="locked-item">${winsLocked.map(w=>`<li>${w}</li>`).join('')}</ul>
-      <div class="lock-overlay">
-        <div class="lock-count">+${winsLocked.length} more strength${winsLocked.length>1?'s':''}</div>
-        <p>See exactly what's working in your CV</p>
-        <button class="btn-unlock-small" onclick="openUnlock()">Unlock</button>
-      </div>
-    </div>` : '';
-
-  const fixesLockedHtml = fixesLocked.length ? `
-    <div class="lock-wrap">
-      <ul class="locked-item">${fixesLocked.map(f=>`<li>${f}</li>`).join('')}</ul>
-      <div class="lock-overlay">
-        <div class="lock-count">+${fixesLocked.length} more fix${fixesLocked.length>1?'es':''}</div>
-        <p>These are likely costing you interviews</p>
-        <button class="btn-unlock-small" onclick="openUnlock()">Unlock</button>
-      </div>
-    </div>` : '';
-
   const quickWinsHtml = isUnlocked
     ? `<ol>${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>`
     : `<div class="lock-wrap">
         <ol class="locked-item">${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>
         <div class="lock-overlay">
-          <div class="lock-count" style="color:var(--white)">3 quick wins found</div>
-          <p style="color:var(--sage-pale)">Concrete fixes you can make today</p>
+          <div class="lock-count" style="color:var(--white)">Your 3-step action plan is ready</div>
+          <p style="color:var(--sage-pale)">Ranked by impact, plus a rewritten example bullet</p>
           <button class="btn-unlock-small" style="background:var(--white);color:var(--matcha-deep)" onclick="openUnlock()">Unlock</button>
         </div>
       </div>`;
+
+  const rewriteHtml = r.rewrittenExample ? (isUnlocked
+    ? `<div class="rewrite-card">
+        <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${r.rewrittenExample.before}</div>
+        <div class="rewrite-row after"><span class="rewrite-tag">After</span>${r.rewrittenExample.after}</div>
+      </div>`
+    : `<div class="lock-wrap">
+        <div class="rewrite-card locked-item">
+          <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${r.rewrittenExample.before}</div>
+          <div class="rewrite-row after"><span class="rewrite-tag">After</span>${r.rewrittenExample.after}</div>
+        </div>
+        <div class="lock-overlay">
+          <div class="lock-count">See the rewrite</div>
+          <p>One real bullet from your CV, rewritten strong</p>
+          <button class="btn-unlock-small" onclick="openUnlock()">Unlock</button>
+        </div>
+      </div>`) : '';
 
   document.getElementById('results').innerHTML = `
     <div class="rx-card">
       <div class="rx-header">
         <div>
-          <h2>Your CV Health Report</h2>
-          <p>Analysed ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</p>
+          <h2>Your ATS Report</h2>
+          <p>Scanned ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</p>
         </div>
         <div class="score-ring" style="--pct:${r.overall}"><span>${r.overall}</span></div>
       </div>
@@ -526,14 +553,20 @@ function renderResults(r, isUnlocked) {
       <div class="score-grid">${bars}</div>
       <div class="verdict ${r.verdict}">${r.verdictText}</div>
     </div>
-    <div class="feedback-grid">
-      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3><ul>${winsShown.map(w=>`<li>${w}</li>`).join('')}</ul>${winsLockedHtml}</div>
-      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>What needs fixing</h3><ul>${fixesShown.map(f=>`<li>${f}</li>`).join('')}</ul>${fixesLockedHtml}</div>
+    <div class="feedback-grid three-col">
+      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3><ul>${r.wins.map(w=>`<li>${w}</li>`).join('')}</ul></div>
+      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3><ul>${r.weaknesses.map(w=>`<li>${w}</li>`).join('')}</ul></div>
+      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>Fixes to make</h3><ul>${r.fixes.map(f=>`<li>${f}</li>`).join('')}</ul></div>
+    </div>
+    <div class="feedback-card ats-flags" style="margin-bottom:20px">
+      <h3><span class="tag-icon" style="background:var(--ink)">⚙</span>Technical ATS flags</h3>
+      <ul>${r.atsIssues.map(a=>`<li>${a}</li>`).join('')}</ul>
     </div>
     <div class="quick-wins">
-      <h3>Quick wins — do these today</h3>
+      <h3>Your action plan</h3>
       ${quickWinsHtml}
     </div>
+    ${rewriteHtml}
     <div class="cta-strip">
       <div>
         <h3>Want a professional rewrite?</h3>
@@ -546,7 +579,12 @@ function renderResults(r, isUnlocked) {
   setTimeout(() => document.querySelectorAll('.bar-fill[data-width]').forEach(b => b.style.width = b.dataset.width+'%'), 150);
 }
 
-function openUnlock(){ document.getElementById('unlockModal').classList.add('show'); }
+function openUnlock(){
+  const priceEl = document.getElementById('modalPrice');
+  const price = formatPrice(4.99);
+  priceEl.innerHTML = `${price} <span>one-time, this report only</span>`;
+  document.getElementById('unlockModal').classList.add('show');
+}
 function closeUnlock(){ document.getElementById('unlockModal').classList.remove('show'); }
 
 async function verifyLicense(){
