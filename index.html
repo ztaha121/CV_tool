@@ -968,11 +968,12 @@ const i18n = {
     signed_in_faceid: 'تم الدخول بالبصمة!', enter_email_first: 'اكتب إيميلك فوق أول، وبعدين اضغط البصمة.'
   }
 };
-let currentLang = 'en';
+let currentLang = localStorage.getItem('zayt_lang') || 'en';
 function t(key){ return (i18n[currentLang] && i18n[currentLang][key]) || (i18n.en && i18n.en[key]) || key; }
 
 function toggleLang(){
   currentLang = currentLang === 'en' ? 'ar' : 'en';
+  localStorage.setItem('zayt_lang', currentLang);
   applyI18n();
 }
 
@@ -1421,6 +1422,11 @@ window.addEventListener('scroll', () => {
   const pastHero = rect.bottom < 0;
   if (pastHero) sticky.classList.add('show'); else sticky.classList.remove('show');
 });
+
+// Restore saved language on load — needed because Google OAuth login does a
+// full page redirect/reload, which would otherwise reset the UI back to English.
+if (currentLang === 'ar') applyI18n();
+
 </script>
 </body>
 </html>
