@@ -320,7 +320,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
     <button class="lang-toggle" onclick="toggleLang()" id="langBtn">عربي</button>
     <button class="lang-toggle" id="authBtn" onclick="openAuth()">Log in</button>
     <button class="lang-toggle" id="addFaceIdBtn" style="display:none" onclick="handleRegisterFaceId()">+ Face ID</button>
-    <a class="btn-nav" href="https://wa.me/966580437821" target="_blank" data-i18n="nav_cta">Book a rewrite</a>
+    <a class="btn-nav" href="https://wa.me/966580437821" target="_blank" data-i18n="nav_cta">Get expert human review</a>
   </nav>
 </header>
 
@@ -475,15 +475,15 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 <div class="modal-backdrop" id="unlockModal">
   <div class="modal">
     <button class="modal-close" onclick="closeUnlock()">✕</button>
-    <h2>You've used your 3 free scans</h2>
-    <p style="font-size:13.5px;color:var(--muted)">Pay once, scan unlimited resumes forever — no subscription, no recurring charge.</p>
-    <div class="price" id="modalPrice">$4.99 <span>one-time, unlimited scans forever</span></div>
+    <h2>Unlock your full report</h2>
+    <p style="font-size:13.5px;color:var(--muted)">See every strength, every fix, your full action plan, and all rewrite examples — pay once, no subscription.</p>
+    <div class="price" id="modalPrice">$4.99 <span>one-time, unlocks every report you scan</span></div>
     <ul>
-      <li>Unlimited resume scans, any time</li>
-      <li>Full report every time — no limits</li>
+      <li>Full report, every scan, no limits</li>
+      <li>Your complete action plan</li>
       <li>Pay once — never billed again</li>
     </ul>
-    <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/cvhealthcheck" target="_blank">Unlock for $4.99 →</a>
+    <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/kdfaka" target="_blank">Unlock for $4.99 →</a>
     <div class="license-row">
       <input type="email" id="licenseInput" placeholder="Email you paid with">
       <button onclick="verifyLicense()">Check</button>
@@ -796,14 +796,14 @@ const i18n = {
     eyebrow: 'no fabricated metrics, ever', sub: 'Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.',
     counter_label: 'resumes scanned this month', trust1: 'scoring dimensions', trust2: 'job markets supported', trust3: 'Instant', trust3b: 'results',
     step1: 'Upload your CV', step2: 'We scan it like a real ATS would', step3: 'You get a plan to fix it',
-    nav_faq: 'FAQ', nav_cta: 'Book a rewrite',
+    nav_faq: 'FAQ', nav_cta: 'Get expert human review',
     heroH1: 'Same resume.<br><span>Different reader.</span>'
   },
   ar: {
     eyebrow: 'بدون أي أرقام ملفّقة، أبداً', sub: 'أغلب السير الذاتية يتم استبعادها قبل أن يراها أي مسؤول توظيف. ارفع سيرتك لترى كيف تقرأها أنظمة التوظيف الآلية — وماذا يجب إصلاحه.',
     counter_label: 'سيرة ذاتية تم فحصها حتى الآن', trust1: 'معايير تقييم', trust2: 'أسواق عمل مدعومة', trust3: 'نتائج', trust3b: 'فورية',
     step1: 'ارفع سيرتك الذاتية', step2: 'نفحصها كما تفحصها أنظمة التوظيف', step3: 'تحصل على خطة لإصلاحها',
-    nav_faq: 'الأسئلة الشائعة', nav_cta: 'احجزي إعادة كتابة',
+    nav_faq: 'الأسئلة الشائعة', nav_cta: 'مراجعة بشرية احترافية',
     heroH1: 'نفس السيرة الذاتية.<br><span>قارئ مختلف.</span>'
   }
 };
@@ -1081,7 +1081,7 @@ function renderResults(r, isSample, isUnlocked) {
         <h3>Want a professional rewrite?</h3>
         <p>A fully rewritten, ATS-optimised CV tailored to your target role — in Arabic or English.</p>
       </div>
-      <a href="https://wa.me/966580437821" class="btn-cta" target="_blank">Book with ZAYT →</a>
+      <a href="https://wa.me/966580437821" class="btn-cta" target="_blank">Get expert human review →</a>
     </div>
     ${isUnlocked ? `<div class="loop-close fade-up" style="animation-delay:.25s">
       <div class="loop-num">✓</div>
@@ -1103,26 +1103,26 @@ function updateScanBanner(){
   const el = document.getElementById('scanBanner');
   if (!el) return;
   if (!isLoggedIn()) {
-    el.textContent = 'Log in to get 3 free ATS scans.';
+    el.textContent = 'Log in to scan your resume (3 free scans per person).';
     el.className = 'scan-banner';
     return;
   }
   if (lastScanStatus && lastScanStatus.unlocked) {
-    el.textContent = 'Full reports unlocked — thanks for your support.';
+    el.textContent = 'Full reports unlocked on every scan — thanks for your support.';
     el.className = 'scan-banner';
     return;
   }
   if (!lastScanStatus) {
-    el.textContent = `You have up to ${FREE_SCAN_LIMIT} free scans (each shows a partial report).`;
+    el.textContent = `${FREE_SCAN_LIMIT} free scans per person — each shows a partial report. Unlock the full report any time for $4.99.`;
     el.className = 'scan-banner';
     return;
   }
   const left = lastScanStatus.scansRemaining;
   if (left <= 0) {
-    el.textContent = "You've used your 3 free scans. Unlock full reports for $4.99, one-time.";
+    el.textContent = "You've used all 3 free scans for this account. Unlock full reports for $4.99 to keep scanning.";
     el.className = 'scan-banner out';
   } else {
-    el.textContent = `${left} of ${FREE_SCAN_LIMIT} free scans left — each shows a partial report`;
+    el.textContent = `${left} of ${FREE_SCAN_LIMIT} free scans left — each shows a partial report. Unlock the full report any time for $4.99.`;
     el.className = left === 1 ? 'scan-banner low' : 'scan-banner';
   }
 }
