@@ -1130,7 +1130,7 @@ async function analyzeCV() {
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers,
-      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), regionNote: meta.note })
+      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), regionNote: meta.note, lang: currentLang })
     });
     const data = await response.json();
     if (data.error === 'paywall_scan_credit') {
