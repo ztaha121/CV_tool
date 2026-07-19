@@ -485,11 +485,11 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
     </ul>
     <a class="btn-gumroad" id="gumroadLink" href="https://zaytaha.gumroad.com/l/cvhealthcheck" target="_blank">Unlock for $4.99 →</a>
     <div class="license-row">
-      <input type="text" id="licenseInput" placeholder="Already purchased? Paste license key">
-      <button onclick="verifyLicense()">Apply</button>
+      <input type="email" id="licenseInput" placeholder="Email you paid with">
+      <button onclick="verifyLicense()">Check</button>
     </div>
     <div class="license-msg" id="licenseMsg"></div>
-    <div class="modal-note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. Your license key arrives by email right after checkout.</div>
+    <div class="modal-note">Price shown in your local currency (approx.) — Gumroad checkout may display it in USD. After paying, come back and check with the same email you used at checkout.</div>
   </div>
 </div>
 
@@ -754,7 +754,7 @@ const demoReport = {
 function showSampleReport(){
   lastResult = demoReport;
   currentReportId = null;
-  renderResults(demoReport, true);
+  renderResults(demoReport, true, true);
 }
 
 // ── Language toggle (EN/AR) — covers static site chrome; the AI-generated
@@ -886,8 +886,8 @@ async function analyzeCV() {
     errDiv.style.display = 'block'; return;
   }
 
-  if (!isUnlockedForever() && scansRemaining() <= 0) {
-    openUnlock();
+  if (!isLoggedIn()) {
+    openAuth();
     return;
   }
 
@@ -907,18 +907,25 @@ async function analyzeCV() {
   }, 1100);
 
   try {
+    const { data: sess } = await supabaseClient.auth.getSession();
+    const token = sess.session ? sess.session.access_token : null;
     const response = await fetch('/api/analyze', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), region: meta.region, regionNote: meta.note, tier: (isUnlockedForever() || isLoggedIn()) ? 'paid' : 'free' })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ cvText: cvText.substring(0, 6000), jobTitle, jobDesc: jobDesc.substring(0, 3000), regionNote: meta.note })
     });
     const data = await response.json();
-    if (data.error) throw new Error(data.error);
-    lastResult = data.result;
-    currentReportId = data.reportId;
-    if (!isUnlockedForever()) incScansUsed();
-    renderResults(data.result);
-    updateScanBanner();
+    if (data.error === 'paywall') {
+      openUnlock();
+    } else if (data.error) {
+      throw new Error(data.error);
+    } else {
+      lastResult = data.result;
+      currentReportId = data.reportId;
+      lastScanStatus = { unlocked: data.unlocked, scansUsed: data.scansUsed, scansRemaining: data.scansRemaining };
+      renderResults(data.result, false, data.unlocked);
+      updateScanBanner();
+    }
   } catch (e) {
     errDiv.textContent = 'Analysis failed — please try again or paste your CV text below.';
     errDiv.style.display = 'block';
@@ -945,7 +952,22 @@ function matchBadge(r){
   return `<div class="match-badge"><div class="match-badge-ring ${cls}" style="--pct:${pct}"><span>${pct}%</span></div><div><div class="match-badge-label">Keyword match</div><div class="match-badge-sub">vs. the job description you pasted</div></div></div>`;
 }
 
-function renderResults(r, isSample) {
+function lockedList(items, isUnlocked, teaseCount, noun){
+  if (isUnlocked) return `<ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  const shown = items.slice(0, teaseCount);
+  const locked = items.slice(teaseCount);
+  const shownHtml = `<ul>${shown.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  if (!locked.length) return shownHtml;
+  return `${shownHtml}<div class="lock-wrap" style="margin-top:12px">
+    <ul class="locked-item">${locked.map(i=>`<li>${i}</li>`).join('')}</ul>
+    <div class="lock-overlay">
+      <div class="lock-count">+${locked.length} more ${noun}</div>
+      <button class="btn-unlock-small" onclick="openUnlock()">Unlock full report</button>
+    </div>
+  </div>`;
+}
+
+function renderResults(r, isSample, isUnlocked) {
   const bars = Object.entries(r.scores).map(([k,v]) => {
     const label = labels[k] || k;
     return `<div class="score-item"><div class="score-item-header"><span>${label}</span><span class="score-item-val">${v}</span></div><div class="bar-track"><div class="bar-fill ${getBarClass(v)}" data-width="${v}" style="width:0%"></div></div></div>`;
@@ -955,17 +977,42 @@ function renderResults(r, isSample) {
   const diff = r.overall - AVG_SCORE;
   const compareHtml = `<div class="compare-line">${diff >= 0 ? '↑' : '↓'} The average resume we scan scores <b>${AVG_SCORE}</b> — yours scored <b>${r.overall}</b> ${diff >= 0 ? `(${diff} points above average)` : `(${Math.abs(diff)} points below average)`}</div>`;
 
-  const quickWinsHtml = `<ol>${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>`;
+  // Free scans show roughly 1/3 of each list; paid/unlocked shows everything.
+  const quickWinsHtml = isUnlocked
+    ? `<ol>${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>`
+    : `<div class="lock-wrap">
+        <ol class="locked-item">${r.quickWins.map(q=>`<li>${q}</li>`).join('')}</ol>
+        <div class="lock-overlay">
+          <div class="lock-count" style="color:var(--white)">Your action plan is ready</div>
+          <p style="color:var(--sage-pale)">Unlock the full report to see it</p>
+          <button class="btn-unlock-small" style="background:var(--white);color:var(--matcha-deep)" onclick="openUnlock()">Unlock full report</button>
+        </div>
+      </div>`;
 
-  const rewriteHtml = (r.rewrittenExamples && r.rewrittenExamples.length)
-    ? `<div class="rewrite-card fade-up">
-        <div class="rewrite-label">See how we'd fix real lines from your CV</div>
-        ${r.rewrittenExamples.map(ex => `
+  const rewriteHtml = (r.rewrittenExamples && r.rewrittenExamples.length) ? (() => {
+    const shown = isUnlocked ? r.rewrittenExamples : r.rewrittenExamples.slice(0, 1);
+    const locked = isUnlocked ? [] : r.rewrittenExamples.slice(1);
+    const shownHtml = shown.map(ex => `
+      <div class="rewrite-pair">
+        <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${ex.before}</div>
+        <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
+      </div>`).join('');
+    const lockedHtml = locked.length ? `
+      <div class="lock-wrap" style="margin-top:12px">
+        <div class="locked-item">${locked.map(ex => `
           <div class="rewrite-pair">
             <div class="rewrite-row before"><span class="rewrite-tag">Before</span>${ex.before}</div>
             <div class="rewrite-row after"><span class="rewrite-tag">After</span>${ex.after}</div>
-          </div>`).join('')}
+          </div>`).join('')}</div>
+        <div class="lock-overlay">
+          <button class="btn-unlock-small" onclick="openUnlock()">Unlock full report</button>
+        </div>
       </div>` : '';
+    return `<div class="rewrite-card fade-up">
+      <div class="rewrite-label">See how we'd fix real lines from your CV</div>
+      ${shownHtml}${lockedHtml}
+    </div>`;
+  })() : '';
 
   document.getElementById('results').innerHTML = `
     <div class="rx-card fade-up">
@@ -983,13 +1030,13 @@ function renderResults(r, isSample) {
       <div class="verdict ${r.verdict}">${r.verdictText}</div>
     </div>
     <div class="feedback-grid three-col fade-up" style="animation-delay:.05s">
-      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3><ul>${r.wins.map(w=>`<li>${w}</li>`).join('')}</ul></div>
-      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3><ul>${r.weaknesses.map(w=>`<li>${w}</li>`).join('')}</ul></div>
-      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>Fixes to make</h3><ul>${r.fixes.map(f=>`<li>${f}</li>`).join('')}</ul></div>
+      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3>${lockedList(r.wins, isUnlocked, 2, 'strengths')}</div>
+      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3>${lockedList(r.weaknesses, isUnlocked, 2, 'weaknesses')}</div>
+      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>Fixes to make</h3>${lockedList(r.fixes, isUnlocked, 2, 'fixes')}</div>
     </div>
     <div class="feedback-card ats-flags fade-up" style="margin-bottom:20px;animation-delay:.1s">
       <h3><span class="tag-icon" style="background:var(--ink)">⚙</span>Technical ATS flags</h3>
-      <ul>${r.atsIssues.map(a=>`<li>${a}</li>`).join('')}</ul>
+      ${lockedList(r.atsIssues, isUnlocked, 2, 'flags')}
     </div>
     <div class="quick-wins fade-up" style="animation-delay:.15s">
       <h3>Your action plan</h3>
@@ -1003,40 +1050,46 @@ function renderResults(r, isSample) {
       </div>
       <a href="https://wa.me/966580437821" class="btn-cta" target="_blank">Book with ZAYT →</a>
     </div>
-    <div class="loop-close fade-up" style="animation-delay:.25s">
+    ${isUnlocked ? `<div class="loop-close fade-up" style="animation-delay:.25s">
       <div class="loop-num">✓</div>
       <div>
         <div class="loop-title">That's your full scan.</div>
         <div class="loop-sub">You now know exactly what's holding your CV back — and what to do about it.</div>
       </div>
-    </div>`;
+    </div>` : ''}`;
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
   setTimeout(() => document.querySelectorAll('.bar-fill[data-width]').forEach(b => b.style.width = b.dataset.width+'%'), 150);
 }
 
-// ── Usage-based paywall: 3 free scans total, then $4.99/month for unlimited ──
+// ── Usage-based paywall: 3 free scans (server-tracked per account), then $4.99 one-time to unlock ──
 const FREE_SCAN_LIMIT = 3;
-function getScansUsed(){ return parseInt(localStorage.getItem('zayt_scans_used') || '0', 10); }
-function incScansUsed(){ localStorage.setItem('zayt_scans_used', getScansUsed() + 1); }
-function isUnlockedForever(){ return localStorage.getItem('zayt_lifetime_unlock') === 'true'; }
-function scansRemaining(){ return Math.max(0, FREE_SCAN_LIMIT - getScansUsed()); }
+let lastScanStatus = null; // { unlocked, scansUsed, scansRemaining } — set from the server's response after each scan
 
 function updateScanBanner(){
   const el = document.getElementById('scanBanner');
   if (!el) return;
-  const modelNote = isLoggedIn() ? ' (premium model active)' : '';
-  if (isUnlockedForever()) {
-    el.textContent = `Unlimited scans unlocked — thanks for your support.${modelNote}`;
+  if (!isLoggedIn()) {
+    el.textContent = 'Log in to get 3 free ATS scans.';
     el.className = 'scan-banner';
     return;
   }
-  const left = scansRemaining();
+  if (lastScanStatus && lastScanStatus.unlocked) {
+    el.textContent = 'Full reports unlocked — thanks for your support.';
+    el.className = 'scan-banner';
+    return;
+  }
+  if (!lastScanStatus) {
+    el.textContent = `You have up to ${FREE_SCAN_LIMIT} free scans (each shows a partial report).`;
+    el.className = 'scan-banner';
+    return;
+  }
+  const left = lastScanStatus.scansRemaining;
   if (left <= 0) {
-    el.textContent = "You've used your 3 free scans. Unlock unlimited access for $4.99, one-time.";
+    el.textContent = "You've used your 3 free scans. Unlock full reports for $4.99, one-time.";
     el.className = 'scan-banner out';
   } else {
-    el.textContent = `${left} of 3 free scans left${modelNote}`;
+    el.textContent = `${left} of ${FREE_SCAN_LIMIT} free scans left — each shows a partial report`;
     el.className = left === 1 ? 'scan-banner low' : 'scan-banner';
   }
 }
@@ -1059,29 +1112,34 @@ updateScanBanner();
 function openUnlock(){
   const priceEl = document.getElementById('modalPrice');
   const price = formatPrice(4.99);
-  priceEl.innerHTML = `${price} <span>one-time, unlimited scans forever</span>`;
+  priceEl.innerHTML = `${price} <span>one-time, full reports forever</span>`;
+  if (isLoggedIn() && currentUser.email) {
+    document.getElementById('licenseInput').value = currentUser.email;
+  }
   document.getElementById('unlockModal').classList.add('show');
 }
 function closeUnlock(){ document.getElementById('unlockModal').classList.remove('show'); }
 
 async function verifyLicense(){
-  const key = document.getElementById('licenseInput').value.trim();
+  const email = document.getElementById('licenseInput').value.trim();
   const msg = document.getElementById('licenseMsg');
   msg.className = 'license-msg'; msg.style.display='block';
-  if (!key) { msg.textContent = 'Enter your license key.'; msg.classList.add('err'); return; }
+  if (!email) { msg.textContent = 'Enter the email you paid with.'; msg.classList.add('err'); return; }
   msg.textContent = 'Checking...'; msg.classList.remove('err','ok');
   try {
-    const res = await fetch('/api/verify-license', {
+    const res = await fetch('/api/check-unlock', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ licenseKey: key })
+      body: JSON.stringify({ email })
     });
     const data = await res.json();
-    if (data.valid) {
-      msg.textContent = 'Subscription active — unlimited scans unlocked!'; msg.classList.add('ok');
-      localStorage.setItem('zayt_lifetime_unlock', 'true');
+    if (data.unlocked) {
+      msg.textContent = 'Payment confirmed — full reports unlocked!'; msg.classList.add('ok');
+      lastScanStatus = { unlocked: true, scansUsed: lastScanStatus ? lastScanStatus.scansUsed : 0, scansRemaining: null };
+      updateScanBanner();
+      if (lastResult) renderResults(lastResult, false, true);
       setTimeout(closeUnlock, 900);
     } else {
-      msg.textContent = data.error || 'That key didn\'t work — check and try again.';
+      msg.textContent = "We don't see a payment from that email yet — it can take a minute after checkout, try again shortly.";
       msg.classList.add('err');
     }
   } catch {
