@@ -13,9 +13,12 @@ export default async function handler(req, res) {
   const email = (body.email || body.purchaser_email || '').toLowerCase().trim();
   const refunded = body.refunded === 'true' || body.refunded === true;
   const chargebacked = body.chargebacked === 'true' || body.chargebacked === true;
+  const isTestPing = body.test === 'true' || body.test === true;
 
-  if (!email) {
+  if (!email || isTestPing) {
     // Gumroad expects a 200 even if we ignore the payload, otherwise it retries forever.
+    // Test pings (from "Send test ping to URL") are explicitly ignored so they can't
+    // accidentally grant a real unlock.
     return res.status(200).json({ ok: true, ignored: true });
   }
 
