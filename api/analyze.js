@@ -94,6 +94,13 @@ export default async function handler(req, res) {
     const reportId = `rpt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     reportCache.set(reportId, { cvText, jobTitle, jobDesc, region, regionNote, createdAt: Date.now() });
 
+    // Fire-and-forget real scan counter (public counter service, no auth needed).
+    // Only increments on the free/first scan of a report, not on the paid re-run,
+    // so it reflects "resumes scanned" rather than API calls made.
+    if (tier !== 'paid') {
+      fetch('https://api.countapi.xyz/hit/zayt-cv-checker/scans').catch(() => {});
+    }
+
     res.status(200).json({ result, reportId });
   } catch (err) {
     res.status(500).json({ error: 'Analysis failed', details: err.message });
