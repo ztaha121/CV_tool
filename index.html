@@ -596,12 +596,31 @@ function updateAuthUI(){
     btn.textContent = 'Log out';
     btn.onclick = handleLogout;
     faceIdBtn.style.display = 'inline-block';
+    refreshScanStatus();
   } else {
     btn.textContent = 'Log in';
     btn.onclick = openAuth;
     faceIdBtn.style.display = 'none';
+    lastScanStatus = null;
   }
   updateScanBanner();
+}
+
+// Pulls the real, server-tracked scan count/unlock status for the signed-in
+// user — needed because a page refresh loses any in-memory state from a scan.
+async function refreshScanStatus(){
+  if (!supabaseClient) return;
+  try {
+    const { data: sess } = await supabaseClient.auth.getSession();
+    const token = sess.session ? sess.session.access_token : null;
+    if (!token) return;
+    const res = await fetch('/api/scan-status', { headers: { 'Authorization': `Bearer ${token}` } });
+    const data = await res.json();
+    if (!data.error) {
+      lastScanStatus = data;
+      updateScanBanner();
+    }
+  } catch {}
 }
 
 // Ask once, ever, whether they want biometric login — never nags again either way.
