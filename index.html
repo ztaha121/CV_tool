@@ -23,7 +23,12 @@
   --amber:#C9932E;
   --radius:14px;
 }
-body{font-family:'Inter',sans-serif;background:radial-gradient(circle at 15% 0%, #EAF1DE 0%, #F3F7EC 45%, #F3F7EC 100%);color:var(--ink);min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;background:radial-gradient(circle at 15% 0%, #EAF1DE 0%, #F3F7EC 45%, #F3F7EC 100%);color:var(--ink);min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.ambient span{position:absolute;border-radius:50%;filter:blur(70px);opacity:.35}
+.ambient .a1{width:420px;height:420px;background:var(--sage);top:-140px;right:-100px}
+.ambient .a2{width:340px;height:340px;background:var(--matcha);bottom:10%;left:-120px;opacity:.18}
+header,.hero,.features,#results,.faq,footer{position:relative;z-index:1}
 a{color:inherit}
 
 /* ── HEADER ── */
@@ -83,11 +88,14 @@ input[type=file]{display:none}
 .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
 .btn-analyze.loading .spinner{display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .5s ease both}
 .error-msg{display:none;margin-top:14px;color:var(--red);font-size:13.5px;text-align:center;font-weight:500}
 
 /* ── FEATURE STRIP ── */
 .features{max-width:960px;margin:56px auto 0;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:0 24px}
-.feature{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 14px;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink)}
+.feature{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 14px;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink);transition:transform .15s,box-shadow .15s}
+.feature:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(63,90,44,.1)}
 .feature .ficon{font-size:18px;display:block;margin-bottom:8px}
 
 /* ── RESULTS ── */
@@ -96,7 +104,7 @@ input[type=file]{display:none}
 .rx-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:16px}
 .rx-header h2{font-size:22px;font-weight:800;letter-spacing:-.3px}
 .rx-header p{font-size:13px;color:var(--muted);margin-top:4px}
-.score-ring{width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--matcha) calc(var(--pct)*1%), var(--sage-pale) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+.score-ring{width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--matcha) calc(var(--pct)*1%), var(--sage-pale) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;box-shadow:0 0 0 6px rgba(122,154,90,.1)}
 .score-ring::after{content:'';position:absolute;inset:8px;background:var(--white);border-radius:50%}
 .score-ring span{position:relative;z-index:1;font-size:24px;font-weight:800;color:var(--ink)}
 .match-badge{display:flex;align-items:center;gap:16px;background:var(--sage-bg);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:24px}
@@ -221,6 +229,8 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 </style>
 </head>
 <body>
+
+<div class="ambient"><span class="a1"></span><span class="a2"></span></div>
 
 <header>
   <div class="logo">
@@ -506,6 +516,21 @@ function matchBadge(r){
   return `<div class="match-badge"><div class="match-badge-ring ${cls}" style="--pct:${pct}"><span>${pct}%</span></div><div><div class="match-badge-label">Keyword match</div><div class="match-badge-sub">vs. the job description you pasted</div></div></div>`;
 }
 
+function lockedList(items, isUnlocked, teaseCount, noun){
+  if (isUnlocked) return `<ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  const shown = items.slice(0, teaseCount);
+  const locked = items.slice(teaseCount);
+  const shownHtml = `<ul>${shown.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  if (!locked.length) return shownHtml;
+  return `${shownHtml}<div class="lock-wrap" style="margin-top:12px">
+    <ul class="locked-item">${locked.map(i=>`<li>${i}</li>`).join('')}</ul>
+    <div class="lock-overlay">
+      <div class="lock-count">+${locked.length} more ${noun}</div>
+      <button class="btn-unlock-small" onclick="openUnlock()">Unlock</button>
+    </div>
+  </div>`;
+}
+
 function renderResults(r, isUnlocked) {
   const bars = Object.entries(r.scores).map(([k,v]) => {
     const label = labels[k] || k;
@@ -541,7 +566,7 @@ function renderResults(r, isUnlocked) {
       </div>`) : '';
 
   document.getElementById('results').innerHTML = `
-    <div class="rx-card">
+    <div class="rx-card fade-up">
       <div class="rx-header">
         <div>
           <h2>Your ATS Report</h2>
@@ -553,21 +578,21 @@ function renderResults(r, isUnlocked) {
       <div class="score-grid">${bars}</div>
       <div class="verdict ${r.verdict}">${r.verdictText}</div>
     </div>
-    <div class="feedback-grid three-col">
-      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3><ul>${r.wins.map(w=>`<li>${w}</li>`).join('')}</ul></div>
-      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3><ul>${r.weaknesses.map(w=>`<li>${w}</li>`).join('')}</ul></div>
-      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>Fixes to make</h3><ul>${r.fixes.map(f=>`<li>${f}</li>`).join('')}</ul></div>
+    <div class="feedback-grid three-col fade-up" style="animation-delay:.05s">
+      <div class="feedback-card wins"><h3><span class="tag-icon">✓</span>What's working</h3>${lockedList(r.wins, isUnlocked, 1, 'strengths')}</div>
+      <div class="feedback-card weak"><h3><span class="tag-icon">▲</span>Weaknesses</h3>${lockedList(r.weaknesses, isUnlocked, 1, 'weaknesses')}</div>
+      <div class="feedback-card fixes"><h3><span class="tag-icon">!</span>Fixes to make</h3>${lockedList(r.fixes, isUnlocked, 1, 'fixes')}</div>
     </div>
-    <div class="feedback-card ats-flags" style="margin-bottom:20px">
+    <div class="feedback-card ats-flags fade-up" style="margin-bottom:20px;animation-delay:.1s">
       <h3><span class="tag-icon" style="background:var(--ink)">⚙</span>Technical ATS flags</h3>
-      <ul>${r.atsIssues.map(a=>`<li>${a}</li>`).join('')}</ul>
+      ${lockedList(r.atsIssues, isUnlocked, 1, 'flags')}
     </div>
-    <div class="quick-wins">
+    <div class="quick-wins fade-up" style="animation-delay:.15s">
       <h3>Your action plan</h3>
       ${quickWinsHtml}
     </div>
     ${rewriteHtml}
-    <div class="cta-strip">
+    <div class="cta-strip fade-up" style="animation-delay:.2s">
       <div>
         <h3>Want a professional rewrite?</h3>
         <p>A fully rewritten, ATS-optimised CV tailored to your target role — in Arabic or English.</p>
