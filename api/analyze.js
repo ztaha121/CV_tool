@@ -39,11 +39,14 @@ async function incrementScansUsed(userId, current) {
     .upsert({ user_id: userId, scans_used: current + 1, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
 }
 
-function buildPrompt({ cvText, jobTitle, jobDesc, regionNote }) {
+function buildPrompt({ cvText, jobTitle, jobDesc, regionNote, lang }) {
   const jobContext = jobTitle ? `The candidate is targeting the role: ${jobTitle}.` : '';
   const jdBlock = jobDesc
     ? `\nJOB DESCRIPTION TO MATCH AGAINST:\n${jobDesc}\n\nAlso compute a "keywordMatch" score (0-100): the percentage of important hard skills, tools, and qualifications from the job description that genuinely appear (or are clearly implied) in the CV. Be strict — don't count a keyword as matched just because a loosely related word appears.`
     : `\nNo job description was provided, so omit "keywordMatch" entirely from the JSON (don't include the key).`;
+  const langBlock = lang === 'ar'
+    ? `\n\nCRITICAL LANGUAGE INSTRUCTION: Write every text value in the JSON output (verdictText, wins, weaknesses, fixes, atsIssues, quickWins, and the "before"/"after" fields in rewrittenExamples) in natural, spoken Saudi Arabic dialect (لهجة سعودية) — not formal Modern Standard Arabic, not a stiff literal translation. Write the way a Saudi CV consultant would actually talk to a candidate. The JSON keys themselves must stay in English exactly as specified below. The rewrittenExamples "before" text should be quoted/adapted from the CV as-is (translate to Arabic if the CV is in English), and "after" should be the Arabic rewrite.`
+    : '';
   return `You are an industrial-grade ATS (Applicant Tracking System) simulator and senior CV consultant, evaluating with the rigor of real enterprise ATS platforms (Workday, Taleo, Greenhouse). Evaluate this CV against ${regionNote}
 
 RUN THIS AS A FULL TECHNICAL + CONTENT AUDIT, not a surface read:
@@ -61,6 +64,7 @@ EXAMPLES OF WEAK VS STRONG BULLETS (use this calibration when scoring "impact" a
 
 The "ats" score should reflect parse-ability specifically (section headers, no tables/columns/graphics, consistent date formats, machine-readable structure) — not general quality.
 ${jdBlock}
+${langBlock}
 
 INSTRUCTIONS:
 First, briefly reason through the CV's strengths and weaknesses in plain text (2-4 short sentences, not a list) — consider achievement specificity, ATS parse-ability, tone, and market fit given the calibration above.
@@ -119,13 +123,13 @@ function extractJson(raw) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { cvText, jobTitle, jobDesc, regionNote } = req.body;
+  const { cvText, jobTitle, jobDesc, regionNote, lang } = req.body;
   if (!cvText || cvText.length < 50) return res.status(400).json({ error: 'No CV text provided' });
 
   const user = await getUserFromAuthHeader(req);
 
   try {
-    const prompt = buildPrompt({ cvText, jobTitle, jobDesc, regionNote: regionNote || 'general international best practice' });
+    const prompt = buildPrompt({ cvText, jobTitle, jobDesc, regionNote: regionNote || 'general international best practice', lang });
     const reportId = `rpt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
     if (!user) {
@@ -133,7 +137,7 @@ export default async function handler(req, res) {
       // Paying $4.99 (via /api/unlock-report) reveals this specific report in full.
       const raw = await callGroq(prompt);
       const result = extractJson(raw);
-      reportCache.set(reportId, { cvText, jobTitle, jobDesc, regionNote, createdAt: Date.now() });
+      reportCache.set(reportId, { cvText, jobTitle, jobDesc, regionNote, lang, createdAt: Date.now() });
       return res.status(200).json({ result, reportId, mode: 'guest', unlocked: false });
     }
 
@@ -149,7 +153,7 @@ export default async function handler(req, res) {
     const raw = await callClaude(prompt);
     const result = extractJson(raw);
     await incrementScansUsed(user.id, scansUsed);
-    reportCache.set(reportId, { cvText, jobTitle, jobDesc, regionNote, createdAt: Date.now() });
+    reportCache.set(reportId, { cvText, jobTitle, jobDesc, regionNote, lang, createdAt: Date.now() });
 
     res.status(200).json({
       result,
