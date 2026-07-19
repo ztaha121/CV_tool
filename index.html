@@ -23,7 +23,7 @@
   --amber:#C9932E;
   --radius:14px;
 }
-body{font-family:'Inter',sans-serif;background:radial-gradient(circle at 15% 0%, #EAF1DE 0%, #F3F7EC 45%, #F3F7EC 100%);color:var(--ink);min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
+body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#DCE9D6 0%,#F3F7EC 35%,#F6F1E7 65%,#F3E4D6 100%);color:var(--ink);min-height:100vh;line-height:1.55;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .ambient span{position:absolute;border-radius:50%;filter:blur(70px);opacity:.35}
 .ambient .a1{width:420px;height:420px;background:var(--sage);top:-140px;right:-100px}
@@ -47,6 +47,23 @@ nav a:hover{color:var(--ink)}
 
 /* ── HERO ── */
 .hero{max-width:1080px;margin:0 auto;padding:64px 24px 8px;text-align:center}
+
+/* ── macOS window chrome ── */
+.mac-window{max-width:800px;margin:0 auto;background:var(--white);border-radius:16px;box-shadow:0 30px 80px -20px rgba(30,42,22,.25),0 4px 20px rgba(30,42,22,.08);overflow:hidden;text-align:left}
+.mac-titlebar{display:flex;align-items:center;gap:8px;padding:13px 18px;background:#F1F0EC;border-bottom:1px solid var(--border);position:relative}
+.mac-dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.mac-dot.red{background:#FF5F57}
+.mac-dot.yellow{background:#FEBC2E}
+.mac-dot.green{background:#28C840}
+.mac-titlebar-text{position:absolute;left:50%;transform:translateX(-50%);font-size:12.5px;font-weight:600;color:var(--muted)}
+.mac-window-body{padding:40px 44px 44px}
+.app-icon{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--matcha),var(--matcha-deep));display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:24px;box-shadow:0 8px 20px rgba(63,90,44,.25)}
+.mac-window-body h1{font-size:34px;line-height:1.2;font-weight:800;letter-spacing:-.8px;color:var(--ink);margin-bottom:14px}
+.mac-window-body h1 span{color:var(--matcha)}
+.mac-window-body > p{font-size:15.5px;color:var(--muted);max-width:480px;margin-bottom:20px}
+.pill-badge{display:inline-flex;align-items:center;gap:6px;background:var(--sage-pale);color:var(--matcha-deep);font-size:13px;font-weight:700;padding:8px 16px;border-radius:100px;margin-bottom:8px}
+.mac-window-body .trust-row,.mac-window-body .story-steps{justify-content:flex-start}
+.mac-window-body .upload-card{margin:32px 0 0;max-width:none}
 .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--matcha-dark);background:var(--sage-pale);padding:7px 16px;border-radius:100px;margin-bottom:22px}
 .hero h1{font-size:46px;line-height:1.15;font-weight:800;letter-spacing:-1px;margin-bottom:16px}
 .hero h1 span{color:var(--matcha)}
@@ -84,9 +101,9 @@ input[type=file]{display:none}
 .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:6px}
 .step-label{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--matcha-deep);margin-bottom:10px}
 .step-num{width:20px;height:20px;border-radius:50%;background:var(--matcha);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.field input,.field select{width:100%;border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-family:'Inter',sans-serif;font-size:14px;background:var(--white);color:var(--ink)}
+.field input,.field select{width:100%;border:none;border-radius:10px;padding:13px 15px;font-family:'Inter',sans-serif;font-size:14px;background:#F0F0EC;color:var(--ink)}
 .field select{cursor:pointer}
-.field input:focus,.field select:focus{outline:none;border-color:var(--matcha)}
+.field input:focus,.field select:focus{outline:2px solid var(--matcha);outline-offset:1px}
 
 .btn-analyze{width:100%;margin-top:20px;background:var(--matcha-dark);color:var(--white);border:none;padding:16px;border-radius:12px;font-family:'Inter',sans-serif;font-weight:700;font-size:15.5px;cursor:pointer;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:9px}
 .btn-analyze:hover{background:var(--matcha-deep)}
@@ -228,6 +245,14 @@ input[type=file]{display:none}
 .license-row{display:flex;gap:8px;margin-top:16px}
 .license-row input{flex:1;border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:13.5px}
 .license-row button{background:var(--ink);color:var(--white);border:none;border-radius:9px;padding:0 16px;font-weight:700;font-size:13px;cursor:pointer}
+.auth-divider{text-align:center;font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:16px 0;position:relative}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--border)}
+.auth-divider::before{left:0}
+.auth-divider::after{right:0}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--white);color:var(--ink);border:1px solid var(--border);padding:12px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer;margin-bottom:10px}
+.btn-google:hover{background:var(--sage-bg)}
+.btn-faceid{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--ink);color:var(--white);border:none;padding:12px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer}
+.btn-faceid:hover{background:var(--matcha-deep)}
 .modal-note{font-size:11.5px;color:var(--muted);margin-top:12px;text-align:center}
 .license-msg{font-size:12.5px;margin-top:8px;display:none;font-weight:500}
 .license-msg.err{color:var(--red)}
@@ -261,6 +286,8 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
   header{padding:16px 20px}
   nav{gap:16px;font-size:13px}
   .hero{padding:44px 18px 8px}
+  .mac-window-body{padding:26px 22px 30px}
+  .mac-window-body h1{font-size:26px}
   .testimonials{grid-template-columns:1fr}
   .hero h1{font-size:32px}
   .upload-inner{padding:20px}
@@ -292,82 +319,93 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
     <a href="#faq" data-i18n="nav_faq">FAQ</a>
     <button class="lang-toggle" onclick="toggleLang()" id="langBtn">عربي</button>
     <button class="lang-toggle" id="authBtn" onclick="openAuth()">Log in</button>
+    <button class="lang-toggle" id="addFaceIdBtn" style="display:none" onclick="handleRegisterFaceId()">+ Face ID</button>
     <a class="btn-nav" href="https://wa.me/966580437821" target="_blank" data-i18n="nav_cta">Book a rewrite</a>
   </nav>
 </header>
 
 <section class="hero">
-  <div class="eyebrow"><span class="pulse-dot"></span> <span data-i18n="eyebrow">Free ATS resume scan</span></div>
-  <h1 id="heroH1">Will your resume pass<br>the <span>ATS scan?</span></h1>
-  <p data-i18n="sub">Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.</p>
-  <div class="trust-row">
-    <span><b>6</b> <span data-i18n="trust1">scoring dimensions</span></span>
-    <span><b>4</b> <span data-i18n="trust2">job markets supported</span></span>
-    <span><b data-i18n="trust3">Instant</b> <span data-i18n="trust3b">results</span></span>
-  </div>
+  <div class="mac-window">
+    <div class="mac-titlebar">
+      <span class="mac-dot red"></span><span class="mac-dot yellow"></span><span class="mac-dot green"></span>
+      <span class="mac-titlebar-text">ATS Resume Checker</span>
+    </div>
+    <div class="mac-window-body">
+      <div class="app-icon">🔍</div>
+      <h1 id="heroH1">Same resume.<br><span>Different reader.</span></h1>
+      <p data-i18n="sub">Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.</p>
+      <div class="pill-badge">✨ <span data-i18n="eyebrow">no fabricated metrics, ever</span></div>
 
-  <div class="story-steps">
-    <div class="story-step"><div class="story-num">1</div><span data-i18n="step1">Upload your CV</span></div>
-    <div class="story-arrow">→</div>
-    <div class="story-step"><div class="story-num">2</div><span data-i18n="step2">We scan it like a real ATS would</span></div>
-    <div class="story-arrow">→</div>
-    <div class="story-step"><div class="story-num">3</div><span data-i18n="step3">You get a plan to fix it</span></div>
-  </div>
-
-  <div class="upload-card">
-    <div class="upload-inner">
-      <input type="file" id="pdfInput" accept=".pdf,.doc,.docx,.txt">
-      <div class="step-label"><span class="step-num">1</span>Upload your resume</div>
-      <div class="drop-area" id="dropArea" onclick="document.getElementById('pdfInput').click()">
-        <span class="drop-icon" id="dropIcon">📄</span>
-        <div class="drop-title" id="dropTitle">Drop your CV here</div>
-        <div class="drop-sub" id="dropSub">PDF, Word, or plain text · Max 5MB</div>
-        <button class="btn-upload" type="button" onclick="event.stopPropagation(); document.getElementById('pdfInput').click()">Choose file</button>
-        <div class="file-pill" id="filePill">
-          <span id="fileName">—</span>
-          <button class="remove-file" onclick="event.stopPropagation(); removeFile()" title="Remove">✕</button>
-        </div>
-      </div>
-      <div class="or-divider">or paste your CV text</div>
-      <textarea id="cvText" class="upload-textarea" placeholder="Paste your CV text here directly"></textarea>
-
-      <div class="step-label"><span class="step-num">2</span>Add job details for a keyword match score</div>
-      <div class="row-2">
-        <div class="field">
-          <label>Target job title (optional)</label>
-          <input type="text" id="jobTitle" placeholder="e.g. Data Analyst">
-        </div>
-        <div class="field">
-          <label>Country</label>
-          <select id="country">
-            <option value="SA">Saudi Arabia</option>
-            <option value="AE">United Arab Emirates</option>
-            <option value="QA">Qatar</option>
-            <option value="KW">Kuwait</option>
-            <option value="BH">Bahrain</option>
-            <option value="OM">Oman</option>
-            <option value="MA">Morocco</option>
-            <option value="EG">Egypt</option>
-            <option value="US">United States</option>
-            <option value="GB">United Kingdom</option>
-            <option value="CA">Canada</option>
-            <option value="OTHER">Global / Other</option>
-          </select>
-        </div>
-      </div>
-      <div class="field" style="margin-top:12px">
-        <label>Job description (optional — improves keyword match accuracy)</label>
-        <textarea id="jobDesc" class="upload-textarea" style="min-height:70px" placeholder="Paste the job posting here for a tailored keyword match score"></textarea>
+      <div class="trust-row">
+        <span><b>6</b> <span data-i18n="trust1">scoring dimensions</span></span>
+        <span><b>4</b> <span data-i18n="trust2">job markets supported</span></span>
+        <span><b data-i18n="trust3">Instant</b> <span data-i18n="trust3b">results</span></span>
       </div>
 
-      <div class="scan-banner" id="scanBanner"></div>
-      <button class="btn-analyze" id="analyzeBtn" onclick="analyzeCV()">
-        <span class="spinner"></span>
-        Run ATS scan
-      </button>
-      <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="error-msg" id="errorMsg"></div>
-      <div class="sample-link"><a href="#" onclick="showSampleReport();return false;">See an example report first →</a></div>
+      <div class="story-steps">
+        <div class="story-step"><div class="story-num">1</div><span data-i18n="step1">Upload your CV</span></div>
+        <div class="story-arrow">→</div>
+        <div class="story-step"><div class="story-num">2</div><span data-i18n="step2">We scan it like a real ATS would</span></div>
+        <div class="story-arrow">→</div>
+        <div class="story-step"><div class="story-num">3</div><span data-i18n="step3">You get a plan to fix it</span></div>
+      </div>
+
+      <div class="upload-card">
+        <div class="upload-inner">
+          <input type="file" id="pdfInput" accept=".pdf,.doc,.docx,.txt">
+          <div class="step-label"><span class="step-num">1</span>Upload your resume</div>
+          <div class="drop-area" id="dropArea" onclick="document.getElementById('pdfInput').click()">
+            <span class="drop-icon" id="dropIcon">📄</span>
+            <div class="drop-title" id="dropTitle">Drop your CV here</div>
+            <div class="drop-sub" id="dropSub">PDF, Word, or plain text · Max 5MB</div>
+            <button class="btn-upload" type="button" onclick="event.stopPropagation(); document.getElementById('pdfInput').click()">Choose file</button>
+            <div class="file-pill" id="filePill">
+              <span id="fileName">—</span>
+              <button class="remove-file" onclick="event.stopPropagation(); removeFile()" title="Remove">✕</button>
+            </div>
+          </div>
+          <div class="or-divider">or paste your CV text</div>
+          <textarea id="cvText" class="upload-textarea" placeholder="Paste your CV text here directly"></textarea>
+
+          <div class="step-label"><span class="step-num">2</span>Add job details for a keyword match score</div>
+          <div class="row-2">
+            <div class="field">
+              <label>Target job title (optional)</label>
+              <input type="text" id="jobTitle" placeholder="e.g. Data Analyst">
+            </div>
+            <div class="field">
+              <label>Country</label>
+              <select id="country">
+                <option value="SA">Saudi Arabia</option>
+                <option value="AE">United Arab Emirates</option>
+                <option value="QA">Qatar</option>
+                <option value="KW">Kuwait</option>
+                <option value="BH">Bahrain</option>
+                <option value="OM">Oman</option>
+                <option value="MA">Morocco</option>
+                <option value="EG">Egypt</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="CA">Canada</option>
+                <option value="OTHER">Global / Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label>Job description (optional — improves keyword match accuracy)</label>
+            <textarea id="jobDesc" class="upload-textarea" style="min-height:70px" placeholder="Paste the job posting here for a tailored keyword match score"></textarea>
+          </div>
+
+          <div class="scan-banner" id="scanBanner"></div>
+          <button class="btn-analyze" id="analyzeBtn" onclick="analyzeCV()">
+            <span class="spinner"></span>
+            Run ATS scan
+          </button>
+          <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="error-msg" id="errorMsg"></div>
+          <div class="sample-link"><a href="#" onclick="showSampleReport();return false;">See an example report first →</a></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -470,6 +508,14 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
       <input type="password" id="authPassword" placeholder="At least 6 characters">
     </div>
     <button class="btn-gumroad" id="authSubmitBtn" onclick="handleAuthSubmit()" style="margin-top:16px">Log in →</button>
+    <div class="auth-divider">or</div>
+    <button class="btn-google" onclick="handleGoogleAuth()">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 7.1 29.6 5 24 5c-7.6 0-14.1 4.3-17.7 10.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5c-2 1.4-4.6 2.3-7.6 2.3-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.8 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.5 5.5C41.4 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/></svg>
+      Continue with Google
+    </button>
+    <button class="btn-faceid" onclick="handleFaceIdAuth()">
+      <span style="font-size:16px">🔐</span> Log in with Face ID
+    </button>
     <div class="license-msg" id="authMsg"></div>
     <div class="modal-note">
       <span id="authSwitchText">No account yet?</span> <a href="#" onclick="toggleAuthMode();return false;" id="authSwitchLink" style="color:var(--matcha-dark);font-weight:600;text-decoration:none">Sign up</a>
@@ -506,6 +552,7 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://unpkg.com/@simplewebauthn/browser@9/dist/bundle/index.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -533,14 +580,74 @@ async function initAuth(){
 function isLoggedIn(){ return !!currentUser; }
 function updateAuthUI(){
   const btn = document.getElementById('authBtn');
+  const faceIdBtn = document.getElementById('addFaceIdBtn');
   if (isLoggedIn()) {
     btn.textContent = 'Log out';
     btn.onclick = handleLogout;
+    faceIdBtn.style.display = 'inline-block';
   } else {
     btn.textContent = 'Log in';
     btn.onclick = openAuth;
+    faceIdBtn.style.display = 'none';
   }
   updateScanBanner();
+}
+async function handleGoogleAuth(){
+  if (!supabaseClient) { alert('Sign-in isn\'t configured yet — check back soon.'); return; }
+  await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+}
+
+// ── Face ID / passkeys via WebAuthn (backed by /api/webauthn/*) ──
+async function handleRegisterFaceId(){
+  if (!isLoggedIn()) return;
+  try {
+    const { data: sess } = await supabaseClient.auth.getSession();
+    const token = sess.session.access_token;
+    const optRes = await fetch('/api/webauthn/register-options', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const options = await optRes.json();
+    const attResp = await SimpleWebAuthnBrowser.startRegistration(options);
+    const verifyRes = await fetch('/api/webauthn/register-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(attResp)
+    });
+    const result = await verifyRes.json();
+    alert(result.verified ? 'Face ID / passkey added to your account!' : 'Could not register: ' + (result.error || 'unknown error'));
+  } catch (e) {
+    alert('Face ID setup failed: ' + e.message);
+  }
+}
+async function handleFaceIdAuth(){
+  const email = document.getElementById('authEmail').value.trim();
+  if (!email) { alert('Enter your email above first, then tap Face ID.'); return; }
+  const msg = document.getElementById('authMsg');
+  msg.className = 'license-msg'; msg.style.display = 'block'; msg.classList.remove('err','ok');
+  try {
+    const optRes = await fetch('/api/webauthn/auth-options', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const options = await optRes.json();
+    if (options.error) throw new Error(options.error);
+    const assertion = await SimpleWebAuthnBrowser.startAuthentication(options);
+    const verifyRes = await fetch('/api/webauthn/auth-verify', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, assertion })
+    });
+    const result = await verifyRes.json();
+    if (!result.verified || !result.token_hash) throw new Error(result.error || 'Verification failed');
+    const { data, error } = await supabaseClient.auth.verifyOtp({ token_hash: result.token_hash, type: 'magiclink' });
+    if (error) throw error;
+    currentUser = data.user;
+    updateAuthUI();
+    msg.textContent = 'Signed in with Face ID!'; msg.classList.add('ok');
+    setTimeout(closeAuth, 800);
+  } catch (e) {
+    msg.textContent = e.message || 'Face ID sign-in failed.';
+    msg.classList.add('err');
+  }
 }
 async function handleLogout(){
   if (supabaseClient) await supabaseClient.auth.signOut();
@@ -625,18 +732,18 @@ function showSampleReport(){
 // report content itself stays in the language the CV/prompt was written in.
 const i18n = {
   en: {
-    eyebrow: 'Free ATS resume scan', sub: 'Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.',
+    eyebrow: 'no fabricated metrics, ever', sub: 'Most resumes get filtered before a recruiter ever sees them. Upload yours and see exactly how applicant tracking systems read it — and what to fix.',
     counter_label: 'resumes scanned this month', trust1: 'scoring dimensions', trust2: 'job markets supported', trust3: 'Instant', trust3b: 'results',
     step1: 'Upload your CV', step2: 'We scan it like a real ATS would', step3: 'You get a plan to fix it',
     nav_faq: 'FAQ', nav_cta: 'Book a rewrite',
-    heroH1: 'Will your resume pass<br>the <span>ATS scan?</span>'
+    heroH1: 'Same resume.<br><span>Different reader.</span>'
   },
   ar: {
-    eyebrow: 'فحص مجاني لتوافق سيرتك مع أنظمة التوظيف', sub: 'أغلب السير الذاتية يتم استبعادها قبل أن يراها أي مسؤول توظيف. ارفع سيرتك لترى كيف تقرأها أنظمة التوظيف الآلية — وماذا يجب إصلاحه.',
+    eyebrow: 'بدون أي أرقام ملفّقة، أبداً', sub: 'أغلب السير الذاتية يتم استبعادها قبل أن يراها أي مسؤول توظيف. ارفع سيرتك لترى كيف تقرأها أنظمة التوظيف الآلية — وماذا يجب إصلاحه.',
     counter_label: 'سيرة ذاتية تم فحصها حتى الآن', trust1: 'معايير تقييم', trust2: 'أسواق عمل مدعومة', trust3: 'نتائج', trust3b: 'فورية',
     step1: 'ارفع سيرتك الذاتية', step2: 'نفحصها كما تفحصها أنظمة التوظيف', step3: 'تحصل على خطة لإصلاحها',
     nav_faq: 'الأسئلة الشائعة', nav_cta: 'احجزي إعادة كتابة',
-    heroH1: 'هل ستجتاز سيرتك<br><span>فحص التوظيف الآلي؟</span>'
+    heroH1: 'نفس السيرة الذاتية.<br><span>قارئ مختلف.</span>'
   }
 };
 let currentLang = 'en';
