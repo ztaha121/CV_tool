@@ -2,6 +2,40 @@
 // a KV/Supabase table if you need reports to survive cold starts / scale).
 const reportCache = global.__cvReportCache || (global.__cvReportCache = new Map());
 
+import { supabaseAdmin } from './_supabase-admin.js';
+
+const FREE_SCAN_LIMIT = 3;
+
+async function getUserFromAuthHeader(req) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace('Bearer ', '');
+  if (!token) return null;
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+  if (error) return null;
+  return data.user;
+}
+
+async function hasUnlockedPurchase(email) {
+  if (!email) return false;
+  const { data } = await supabaseAdmin
+    .from('unlocked_purchases')
+    .select('email')
+    .eq('email', email.toLowerCase().trim())
+    .single();
+  return !!data;
+}
+
+async function getScansUsed(userId) {
+  const { data } = await supabaseAdmin.from('user_scan_usage').select('scans_used').eq('user_id', userId).single();
+  return data ? data.scans_used : 0;
+}
+
+async function incrementScansUsed(userId, current) {
+  await supabaseAdmin
+    .from('user_scan_usage')
+    .upsert({ user_id: userId, scans_used: current + 1, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+}
+
 function buildPrompt({ cvText, jobTitle, jobDesc, regionNote }) {
   const jobContext = jobTitle ? `The candidate is targeting the role: ${jobTitle}.` : '';
   const jdBlock = jobDesc
@@ -81,20 +115,38 @@ function extractJson(raw) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  const { cvText, jobTitle, jobDesc, region, regionNote, tier } = req.body;
+
+  const user = await getUserFromAuthHeader(req);
+  if (!user) return res.status(401).json({ error: 'Please sign in to scan your resume.' });
+
+  const { cvText, jobTitle, jobDesc, regionNote } = req.body;
   if (!cvText || cvText.length < 50) return res.status(400).json({ error: 'No CV text provided' });
 
   try {
+    const unlocked = await hasUnlockedPurchase(user.email);
+    const scansUsed = await getScansUsed(user.id);
+
+    if (!unlocked && scansUsed >= FREE_SCAN_LIMIT) {
+      return res.status(403).json({ error: 'paywall', scansUsed, unlocked: false });
+    }
+
     const prompt = buildPrompt({ cvText, jobTitle, jobDesc, regionNote: regionNote || 'general international best practice' });
-    // Free tier uses the cheap/fast model. A paid unlock re-runs on Claude
-    // Haiku for a more accurate, personalized pass (see verify-license.js).
-    const raw = tier === 'paid' ? await callClaude(prompt) : await callGroq(prompt);
+    // Paying/unlocked users get the more accurate model on every scan.
+    const raw = unlocked ? await callClaude(prompt) : await callGroq(prompt);
     const result = extractJson(raw);
 
-    const reportId = `rpt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    reportCache.set(reportId, { cvText, jobTitle, jobDesc, region, regionNote, createdAt: Date.now() });
+    if (!unlocked) await incrementScansUsed(user.id, scansUsed);
 
-    res.status(200).json({ result, reportId });
+    const reportId = `rpt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    reportCache.set(reportId, { cvText, jobTitle, jobDesc, regionNote, createdAt: Date.now() });
+
+    res.status(200).json({
+      result,
+      reportId,
+      unlocked,
+      scansUsed: unlocked ? scansUsed : scansUsed + 1,
+      scansRemaining: unlocked ? null : Math.max(0, FREE_SCAN_LIMIT - (scansUsed + 1))
+    });
   } catch (err) {
     res.status(500).json({ error: 'Analysis failed', details: err.message });
   }
