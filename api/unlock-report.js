@@ -35,7 +35,8 @@ export default async function handler(req, res) {
       cvText: cached.cvText,
       jobTitle: cached.jobTitle,
       jobDesc: cached.jobDesc,
-      regionNote: cached.regionNote || 'general international best practice'
+      regionNote: cached.regionNote || 'general international best practice',
+      lang: cached.lang
     });
     const raw = await callClaude(prompt);
     const match = raw.match(/\{[\s\S]*\}/);
