@@ -4,6 +4,9 @@ import { supabaseAdmin } from './_supabase-admin.js';
 // per-product under Settings). Gumroad POSTs form-encoded data on every sale,
 // refund, and dispute for products with Ping enabled.
 export default async function handler(req, res) {
+  // Gumroad's "Send test ping" button may hit this with GET just to check
+  // the endpoint is reachable — respond 200 so that check passes.
+  if (req.method === 'GET') return res.status(200).json({ ok: true, note: 'Gumroad webhook endpoint is reachable' });
   if (req.method !== 'POST') return res.status(405).end();
 
   const body = req.body || {};
