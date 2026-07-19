@@ -558,8 +558,8 @@ footer{margin-top:100px;background:var(--matcha-deep);color:var(--sage-pale);pad
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 // ── Supabase Auth — replace these with your own project's values ──
 // (Supabase → Project Settings → API. The anon/public key is safe to expose client-side.)
-const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL = 'https://niltexopovichwulgwxv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pbHRleG9wb3ZpY2h3dWxnd3h2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NzQ1MjYsImV4cCI6MjEwMDA1MDUyNn0.uzbBYTbWUugKbELKsjOgm_sWOncHqSxl0tkU4y5OPX8';
 const supabaseClient = (SUPABASE_URL.includes('YOUR-PROJECT-REF'))
   ? null
   : window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
